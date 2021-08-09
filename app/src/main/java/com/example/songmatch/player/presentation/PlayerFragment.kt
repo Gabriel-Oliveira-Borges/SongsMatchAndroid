@@ -1,9 +1,13 @@
 package com.example.songmatch.player.presentation
 
+import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.songmatch.ui.main.CLIENT_ID
-import com.example.songmatch.ui.main.REDIRECT_URI
+import com.example.songmatch.login.presentation.presentation.CLIENT_ID
+import com.example.songmatch.login.presentation.presentation.REDIRECT_URI
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -13,7 +17,15 @@ import com.spotify.protocol.types.Track
 private var mSpotifyAppRemote: SpotifyAppRemote? = null
 
 //    I will use this class later, when it will be possible to play the playlist directly from the app (So, I will keep the user longer using the app and monetize it more)
-class PlayerFrament: Fragment() {
+class PlayerFragment: Fragment() {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
     override fun onStop() {
         super.onStop()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)

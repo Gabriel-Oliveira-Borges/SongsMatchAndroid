@@ -1,11 +1,16 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
 }
 
 android {
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
+
+    buildFeatures {
+        dataBinding true
+    }
 
     defaultConfig {
         applicationId "com.example.songmatch"
@@ -33,6 +38,14 @@ android {
 }
 
 dependencies {
+    def nav_version = "2.3.5"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-dynamic-features-fragment:$nav_version"
+
+    //  Spotify
     implementation 'com.spotify.android:auth:1.1.0'
 
     implementation project(':spotify-app-remote')
