@@ -1,4 +1,4 @@
-package com.example.songmatch.login.presentation.presentation.model
+package com.example.songmatch.login.presentation.model
 
 import android.app.Activity
 

@@ -7,6 +7,6 @@
     <fragment
         tools:layout="@layout/spotify_login_fragment"
         android:id="@+id/spotifyLoginFragment"
-        android:name="com.example.songmatch.login.presentation.presentation.SpotifyLoginFragment"
+        android:name="com.example.songmatch.login.presentation.SpotifyLoginFragment"
         android:label="SpotifyLoginFragment" />
 </navigation>

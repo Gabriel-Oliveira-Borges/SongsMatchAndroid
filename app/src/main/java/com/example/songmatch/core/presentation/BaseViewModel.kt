@@ -1,4 +1,4 @@
-package com.example.songmatch
+package com.example.songmatch.core.presentation
 
 import androidx.lifecycle.ViewModel
 

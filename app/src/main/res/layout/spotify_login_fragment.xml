@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.login.presentation.presentation.SpotifyLoginViewModel" />
+            type="com.example.songmatch.login.presentation.SpotifyLoginViewModel" />
         <variable
             name="listener"
             type="com.example.songmatch.login.presentation.listener.SpotifyLoginFragmentListener" />

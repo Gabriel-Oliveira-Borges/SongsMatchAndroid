@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.songmatch.login.presentation.presentation.CLIENT_ID
-import com.example.songmatch.login.presentation.presentation.REDIRECT_URI
+import com.example.songmatch.login.presentation.CLIENT_ID
+import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote

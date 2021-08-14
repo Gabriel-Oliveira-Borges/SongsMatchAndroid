@@ -1,18 +1,20 @@
 package com.example.songmatch
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.songmatch.login.presentation.presentation.SpotifyLoginFragment
-import com.example.songmatch.login.presentation.presentation.SPOTIFY_LOGIN_REQUEST_CODE
+import com.example.songmatch.core.useCase.SaveUserSpotifyTokenUseCase
+import com.example.songmatch.login.presentation.SpotifyLoginFragment
+import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
+import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-const val SPOTIFY_TOKEN = "SPOTIFY_TOKEN"
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    val sharedPreferences by lazy { getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE) }
+    @Inject lateinit var saveSpotifyToken: SaveUserSpotifyTokenUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,20 +34,33 @@ class MainActivity : AppCompatActivity() {
                     AuthenticationClient.getResponse(resultCode, data)
                 when (response.type) {
                     AuthenticationResponse.Type.TOKEN -> {
-                        // TODO: Não usar o sharedPreferences diretamente na activity. Esse token é válido por apenas 1 hora. Quando eu precisar atualizar as músicas, eu vou precisar pedir novamente pelo login. A parte boa é que fica salvo
-                        with(sharedPreferences.edit()) {
-                            putString(SPOTIFY_TOKEN, response.accessToken)
-                            apply()
-                        }
+                        saveSpotifyToken(
+                            token = response.accessToken,
+                            expiresIn = response.expiresIn
+                        )
+                        notifyFragments(successful = true)
                     }
                     AuthenticationResponse.Type.ERROR -> {
-                        // TODO: Avisar ao usuário que deu ruim!
+                        notifyFragments(successful = false)
                     }
                     else -> {
-                        // TODO: Avisar ao usuário que deu ruim!
+                        notifyFragments(successful = false)
                     }
                 }
             }
+        }
+    }
+
+    private fun getAllSpotifyAuthFragment(): List<SpotifyAuthBaseFragment> {
+        return supportFragmentManager.fragments.filterIsInstance<SpotifyAuthBaseFragment>()
+    }
+
+    private fun notifyFragments(successful: Boolean) {
+        getAllSpotifyAuthFragment().forEach {
+            if (successful)
+                it.onSpotifyLoginSuccess()
+            else
+                it.onSpotifyLoginError()
         }
     }
 }
