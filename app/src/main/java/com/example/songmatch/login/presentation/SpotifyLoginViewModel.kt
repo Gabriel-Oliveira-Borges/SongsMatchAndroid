@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SpotifyLoginViewModel @Inject constructor(
-    private val loginToSpotifyUseCase: LoginToSpotifyUseCase,
+    private val loginToSpotifyUseCase: LoginToSpotifyUseCase
 ): BaseViewModel<SpotifyLoginViewAction, SpotifyLoginViewState>() {
     override val viewState = SpotifyLoginViewState()
 

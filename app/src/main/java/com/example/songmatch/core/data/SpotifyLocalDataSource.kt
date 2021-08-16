@@ -1,59 +1,64 @@
 package com.example.songmatch.core.data
 
-import android.content.Context
-import com.example.songmatch.core.extensions.get
+import com.example.songmatch.core.framework.room.daos.UserDao
+import com.example.songmatch.core.framework.room.entities.User
 import com.example.songmatch.core.models.ResultOf
-import dagger.hilt.android.qualifiers.ApplicationContext
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-import java.time.LocalTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
 interface SpotifyLocalDataSource {
-    fun getUserToken(): ResultOf<String, Unit>
-    fun saveUserToken(token: String, expiresIn: Int): ResultOf<Unit, Unit>
-    fun updateToken(token: String, expiresIn: Int): ResultOf<Unit, Unit>
-    fun removeToken(): ResultOf<Unit, Unit>
+    suspend fun getCurrentUser(): ResultOf<User?, Unit>
+    suspend fun saveUser(token: String, expiresIn: Int, name: String?): ResultOf<Unit, Unit>
+    suspend fun updateUserName(name: String): ResultOf<Unit, Unit>
+    suspend fun updateToken(token: String, expiresIn: Int): ResultOf<Unit, Unit>
+    suspend fun removeUser(): ResultOf<Unit, Unit>
 }
 
-private val SPOTIFY_USER_TOKEN_KEY = "SPOTIFY_USER_TOKEN_KEY"
-private val SPOTIFY_USER_TOKEN_EXPIRATION_KEY = "SPOTIFY_USER_TOKEN_EXPIRATION_KEY"
-private val SPOTIFY_USER_TOKEN_EXPIRATION_DATE_FORMAT = "dd-MM-yyyy HH:mm:ss"
-
 class SpotifyLocalDataSourceImp @Inject constructor(
-    private val sharedPreferencesDataSource: SharedPreferencesDataSource,
-    @ApplicationContext private val context: Context
+    private val userDao: UserDao,
 ): SpotifyLocalDataSource {
-    override fun getUserToken(): ResultOf<String, Unit> {
-        //        TODO: DEVOLVER NAO APENAS O TOKEN, MAS SIM O `SpotifyUserToken`, COM TODOS OS SEUS DADOS
-        val token: String? = sharedPreferencesDataSource.getValue(SPOTIFY_USER_TOKEN_KEY, "").handleResult()
-//        TODO: OS DADOS NÃO ESTÃO SENDO PEGOS CORRETAMENTE. SALVAR ESTÁ ROLANDO!
-        return when {
-            !token.isNullOrEmpty() -> ResultOf.Success(token)
-            else -> ResultOf.Error(Unit)
-        }
-
-    }
-
-    override fun saveUserToken(token: String, expiresIn: Int): ResultOf<Unit, Unit> {
-        return sharedPreferencesDataSource.saveValue(key = SPOTIFY_USER_TOKEN_KEY, value = token).onSuccess {
-            val dateFormat = SimpleDateFormat(SPOTIFY_USER_TOKEN_EXPIRATION_DATE_FORMAT);
-
-            val calendar = Calendar.getInstance()
-            calendar.add(Calendar.SECOND, expiresIn)
-
-            val date = dateFormat.format(calendar.time);
-
-            sharedPreferencesDataSource.saveValue(key = SPOTIFY_USER_TOKEN_EXPIRATION_KEY, value = date)
+    override suspend fun getCurrentUser(): ResultOf<User?, Unit> {
+        return withContext(Dispatchers.IO) {
+            return@withContext ResultOf.Success(userDao.getCurrentUser())
         }
     }
 
-    override fun updateToken(token: String, expiresIn: Int): ResultOf<Unit, Unit> {
-        TODO("Not yet implemented")
+    override suspend fun saveUser(token: String, expiresIn: Int, name: String?): ResultOf<Unit, Unit> {
+        val tokenExpiration = calculateTokenExpiration(expiresIn)
+        val user = User(token = token, name = name, tokenExpiration = tokenExpiration)
+        userDao.insertUser(user)
+        return ResultOf.Success(Unit)
     }
 
-    override fun removeToken(): ResultOf<Unit, Unit> {
-        TODO("Not yet implemented")
+    override suspend fun updateUserName(name: String): ResultOf<Unit, Unit> {
+        return userDao.getCurrentUser()?.let {
+            return ResultOf.Success(userDao.updateUser(it.copy(name = name)))
+        } ?: ResultOf.Error(Unit)
+    }
+
+    override suspend fun updateToken(token: String, expiresIn: Int): ResultOf<Unit, Unit> {
+        val user = userDao.getCurrentUser()
+        val tokenExpiration = calculateTokenExpiration(expiresIn)
+        return user?.let {
+            ResultOf.Success(
+                userDao.updateUserToken(oldToken = user.token, newToken = token, tokenExpiration = tokenExpiration)
+            )
+        } ?: ResultOf.Error(Unit)
+    }
+
+    override suspend fun removeUser(): ResultOf<Unit, Unit> {
+        val user = userDao.getCurrentUser()
+
+        return user?.let {
+            ResultOf.Success(userDao.deleteUser(user))
+        } ?: ResultOf.Error(Unit)
+    }
+
+    private fun calculateTokenExpiration(expiresIn: Int): Date {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.SECOND, expiresIn)
+        return calendar.time
     }
 }

@@ -3,6 +3,7 @@ package com.example.songmatch.core.framework.room.daos
 import androidx.room.*
 import com.example.songmatch.core.framework.room.entities.User
 import kotlinx.coroutines.flow.Flow
+import java.util.*
 
 @Dao
 interface UserDao {
@@ -12,6 +13,15 @@ interface UserDao {
     @Delete
     suspend fun deleteUser(user: User)
 
-    @Query("SELECT * FROM user")
-    suspend fun getUsers(): List<User>
+    @Query("SELECT * FROM user LIMIT 1")
+    suspend fun getCurrentUser(): User?
+
+    @Query("SELECT * FROM user LIMIT 1")
+    fun observeUser(): Flow<User?>
+
+    @Update
+    suspend fun updateUser(user: User)
+
+    @Query("UPDATE user SET token = :newToken, tokenExpiration = :tokenExpiration WHERE token = :oldToken")
+    suspend fun updateUserToken(oldToken: String, newToken: String, tokenExpiration: Date)
 }
