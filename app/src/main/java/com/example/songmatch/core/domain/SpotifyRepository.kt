@@ -10,6 +10,7 @@ interface SpotifyRepository {
     suspend fun saveUser(token: String, expiresIn: Int, name: String?): ResultOf<Unit, Unit>
 }
 
+//TODO: Tirar essas funções daqui e do SpotifyLocalDataSource e mover para SessionRepository e SessionDataSource
 class SpotifyRepositoryImp @Inject constructor(
     private val spotifyLocalDataSource: SpotifyLocalDataSource
 ) : SpotifyRepository {

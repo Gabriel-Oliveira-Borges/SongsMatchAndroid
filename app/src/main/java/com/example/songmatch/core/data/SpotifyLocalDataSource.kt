@@ -26,6 +26,7 @@ class SpotifyLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun saveUser(token: String, expiresIn: Int, name: String?): ResultOf<Unit, Unit> {
+        userDao.deleteUsers()
         val tokenExpiration = calculateTokenExpiration(expiresIn)
         val user = User(token = token, name = name, tokenExpiration = tokenExpiration)
         userDao.insertUser(user)
@@ -49,11 +50,7 @@ class SpotifyLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun removeUser(): ResultOf<Unit, Unit> {
-        val user = userDao.getCurrentUser()
-
-        return user?.let {
-            ResultOf.Success(userDao.deleteUser(user))
-        } ?: ResultOf.Error(Unit)
+        return ResultOf.Success(userDao.deleteUsers())
     }
 
     private fun calculateTokenExpiration(expiresIn: Int): Date {

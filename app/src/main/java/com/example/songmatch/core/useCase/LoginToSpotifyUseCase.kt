@@ -13,7 +13,7 @@ interface LoginToSpotifyUseCase {
     operator fun invoke(receiverActivity: Activity)
 }
 
-private val SPOTIFY_AUTH_SCOPES = arrayOf("streaming", "user-top-read", "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing", "playlist-modify-private", "user-follow-read", "user-library-read", "user-read-email")
+private val SPOTIFY_AUTH_SCOPES = arrayOf("streaming", "user-top-read", "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing", "playlist-modify-private", "user-follow-read", "user-library-read", "user-read-email", "user-read-private")
 
 class LoginToSpotifyUseCaseImp @Inject constructor(
 ): LoginToSpotifyUseCase {

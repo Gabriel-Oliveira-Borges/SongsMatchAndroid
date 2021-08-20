@@ -10,8 +10,8 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(user: User)
 
-    @Delete
-    suspend fun deleteUser(user: User)
+    @Query("DELETE FROM User")
+    suspend fun deleteUsers()
 
     @Query("SELECT * FROM user LIMIT 1")
     suspend fun getCurrentUser(): User?
