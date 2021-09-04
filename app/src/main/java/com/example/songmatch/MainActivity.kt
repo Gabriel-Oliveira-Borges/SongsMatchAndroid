@@ -41,9 +41,12 @@ class MainActivity : AppCompatActivity() {
                                 token = response.accessToken,
                                 expiresIn = response.expiresIn,
                                 name = null
-                            )
+                            ).onError {
+                                notifyFragments(successful = false)
+                            }.onSuccess {
+                                notifyFragments(successful = true)
+                            }
                         }
-                        notifyFragments(successful = true)
                     }
                     AuthenticationResponse.Type.ERROR -> {
                         notifyFragments(successful = false)

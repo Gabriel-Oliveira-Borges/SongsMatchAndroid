@@ -1,27 +1,27 @@
 package com.example.songmatch.core.framework.room.daos
 
 import androidx.room.*
-import com.example.songmatch.core.framework.room.entities.User
+import com.example.songmatch.core.framework.room.entities.UserEntity
 import kotlinx.coroutines.flow.Flow
 import java.util.*
 
 @Dao
 interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: User)
+    suspend fun insertUser(userEntity: UserEntity)
 
-    @Query("DELETE FROM User")
+    @Query("DELETE FROM UserEntity")
     suspend fun deleteUsers()
 
-    @Query("SELECT * FROM user LIMIT 1")
-    suspend fun getCurrentUser(): User?
+    @Query("SELECT * FROM UserEntity LIMIT 1")
+    suspend fun getCurrentUser(): UserEntity?
 
-    @Query("SELECT * FROM user LIMIT 1")
-    fun observeUser(): Flow<User?>
+    @Query("SELECT * FROM UserEntity LIMIT 1")
+    fun observeUser(): Flow<UserEntity?>
 
     @Update
-    suspend fun updateUser(user: User)
+    suspend fun updateUser(userEntity: UserEntity)
 
-    @Query("UPDATE user SET token = :newToken, tokenExpiration = :tokenExpiration WHERE token = :oldToken")
+    @Query("UPDATE UserEntity SET token = :newToken, tokenExpiration = :tokenExpiration WHERE token = :oldToken")
     suspend fun updateUserToken(oldToken: String, newToken: String, tokenExpiration: Date)
 }

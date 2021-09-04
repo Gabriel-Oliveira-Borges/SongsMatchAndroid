@@ -1,7 +1,7 @@
 package com.example.songmatch.core.di
 
-import com.example.songmatch.core.domain.SpotifyRepository
-import com.example.songmatch.core.domain.SpotifyRepositoryImp
+import com.example.songmatch.core.domain.SessionRepository
+import com.example.songmatch.core.domain.SessionRepositoryImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -14,5 +14,5 @@ abstract class DomainModule {
 
     @Singleton
     @Binds
-    abstract fun bindSpotifyRepository(imp: SpotifyRepositoryImp): SpotifyRepository
+    abstract fun bindSpotifyRepository(imp: SessionRepositoryImp): SessionRepository
 }

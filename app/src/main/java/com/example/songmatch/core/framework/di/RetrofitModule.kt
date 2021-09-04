@@ -3,6 +3,7 @@ package com.example.songmatch.core.framework.di
 import com.example.songmatch.core.api.SpotifyAPI
 import com.example.songmatch.core.di.Names
 import com.example.songmatch.core.framework.retrofit.AuthInterceptor
+import com.example.songmatch.core.framework.room.daos.UserDao
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import dagger.Module
 import dagger.Provides
@@ -36,9 +37,9 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesAuthInterceptor(getCurrentUserUseCase: GetCurrentUserUseCase): OkHttpClient {
+    fun providesAuthInterceptor(userDao: UserDao): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(getCurrentUserUseCase))
+            .addInterceptor(AuthInterceptor(userDao))
             .build()
     }
 

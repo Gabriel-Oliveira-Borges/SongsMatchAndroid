@@ -1,7 +1,7 @@
 package com.example.songmatch.core.useCase
 
-import com.example.songmatch.core.domain.SpotifyRepository
-import com.example.songmatch.core.framework.room.entities.User
+import com.example.songmatch.core.domain.SessionRepository
+import com.example.songmatch.core.domain.model.User
 import com.example.songmatch.core.models.ResultOf
 import javax.inject.Inject
 
@@ -11,9 +11,9 @@ interface GetCurrentUserUseCase {
 }
 
 class GetCurrentUserUseCaseImp @Inject constructor(
-    private val spotifyRepository: SpotifyRepository
+    private val sessionRepository: SessionRepository
 ) : GetCurrentUserUseCase {
     override suspend operator fun invoke(): ResultOf<User?, Unit> {
-        return spotifyRepository.getCurrentUser()
+        return sessionRepository.getCurrentUser()
     }
 }

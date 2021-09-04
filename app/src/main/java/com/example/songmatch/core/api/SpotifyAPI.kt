@@ -1,36 +1,32 @@
 package com.example.songmatch.core.api
 
-import com.google.gson.annotations.JsonAdapter
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import kotlinx.coroutines.Deferred
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 
 
 interface SpotifyAPI {
     @GET("/v1/me")
-    suspend fun getUser(): Response<UserProfile>
+    suspend fun getUser(): SpotifyUserResponse
 }
 
 
-// TODO: Renomear essas classes para "AlgumaCoisaResponse"
 @JsonClass(generateAdapter = true)
-data class UserProfile(
+data class SpotifyUserResponse(
     @Json(name = "display_name") val displayName: String,
     val email: String?,
-    val images: List<UserProfileImage>,
+    val images: List<SpotityUserProfileImageResponse>,
     val uri: String,
-    @Json(name = "external_urls")val externalUrls: UserProfileExternalUrls
+    @Json(name = "external_urls")val externalUrls: SpotifyUserExternalUrlsResponse
 )
 
 @JsonClass(generateAdapter = true)
-data class UserProfileImage(
+data class SpotityUserProfileImageResponse(
     val url: String
 )
 
 @JsonClass(generateAdapter = true)
-data class UserProfileExternalUrls(
+data class SpotifyUserExternalUrlsResponse(
     val spotify: String
 )
