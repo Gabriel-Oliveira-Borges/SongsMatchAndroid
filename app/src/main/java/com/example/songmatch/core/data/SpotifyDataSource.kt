@@ -1,9 +1,7 @@
 package com.example.songmatch.core.data
 
 import android.util.Log
-import com.example.songmatch.core.api.PagingObjectResponse
-import com.example.songmatch.core.api.SpotifyAPI
-import com.example.songmatch.core.api.UserSavedTracksResponse
+import com.example.songmatch.core.api.*
 import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.helpers.getAllPaginatedItems
 import com.example.songmatch.core.helpers.safeApiCall
@@ -20,6 +18,7 @@ interface SpotifyDataSource {
     ): ResultOf<UserEntity, ResponseError.NetworkError>
 
     suspend fun getUserSavedTracks(): ResultOf<List<UserSavedTracksResponse>, ResponseError>
+    suspend fun getUserTopTracks(): ResultOf<List<TrackResponse>, ResponseError>
 }
 
 class SpotifyDataSourceImpl @Inject constructor(
@@ -36,10 +35,47 @@ class SpotifyDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getUserSavedTracks(): ResultOf<List<UserSavedTracksResponse>, ResponseError> {
-        return safeApiCall {
-            getAllPaginatedItems(limit = 50) { limit, offset ->
-                spotifyAPI.getUserSavedTracks(limit, offset)
-            }!!
+        return getAllPaginatedItems(limit = 50) { limit, offset ->
+            spotifyAPI.getUserSavedTracks(limit, offset)
         }
+    }
+
+    override suspend fun getUserTopTracks(): ResultOf<List<TrackResponse>, ResponseError> {
+        val tracks = mutableListOf<TrackResponse>()
+
+        getAllPaginatedItems(limit = 50) { limit, offset ->
+            spotifyAPI.getUserTopTracks(
+                limit = limit,
+                offset = offset,
+                timeRange = TimeRange.SHORT_TERM.field
+            )
+        }.onSuccess {
+            it.map { a -> a.timeRange = TimeRange.SHORT_TERM.field }
+            tracks += it
+        }.onError { return ResultOf.Error(it) }
+
+        getAllPaginatedItems(limit = 50) { limit, offset ->
+            spotifyAPI.getUserTopTracks(
+                limit = limit,
+                offset = offset,
+                timeRange = TimeRange.MEDIUM_TERM.field
+            )
+        }.onSuccess {
+            it.map { a -> a.timeRange = TimeRange.MEDIUM_TERM.field }
+            tracks += it
+        }.onError { return ResultOf.Error(it) }
+
+        getAllPaginatedItems(limit = 50) { limit, offset ->
+            spotifyAPI.getUserTopTracks(
+                limit = limit,
+                offset = offset,
+                timeRange = TimeRange.LONG_TERM.field
+            )
+        }.onSuccess {
+            it.map { a -> a.timeRange = TimeRange.LONG_TERM.field }
+            tracks += it
+        }.onError { return ResultOf.Error(it) }
+
+        return ResultOf.Success(tracks)
     }
 }

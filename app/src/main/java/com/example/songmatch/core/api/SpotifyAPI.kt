@@ -2,12 +2,14 @@ package com.example.songmatch.core.api
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
-
+enum class TimeRange(val field: String) {
+    SHORT_TERM("short_term"),
+    MEDIUM_TERM("medium_term"),
+    LONG_TERM("long_term")
+}
 interface SpotifyAPI {
     @GET("/v1/me")
     suspend fun getUser(): SpotifyUserResponse
@@ -17,6 +19,13 @@ interface SpotifyAPI {
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int
     ): PagingObjectResponse<UserSavedTracksResponse>
+
+    @GET("/v1/me/top/tracks")
+    suspend fun getUserTopTracks(
+        @Query("limit") limit: Int = 50,
+        @Query("offset") offset: Int,
+        @Query("time_range") timeRange: String
+    ): PagingObjectResponse<TrackResponse>
 }
 
 @JsonClass(generateAdapter = true)
@@ -66,11 +75,11 @@ data class SpotifyUserExternalUrlsResponse(
 @JsonClass(generateAdapter = true)
 data class UserSavedTracksResponse(
     @field:Json(name = "added_at") val addedAt: String,
-    val track: UserSavedTracksTrackResponse
+    val track: TrackResponse
 )
 
 @JsonClass(generateAdapter = true)
-data class UserSavedTracksTrackResponse(
+data class TrackResponse(
     val artists: List<ArtistObjectResponse>,
     @field:Json(name = "duration_ms") val duration: String,
     val id: String,
@@ -78,4 +87,6 @@ data class UserSavedTracksTrackResponse(
     val type: String,
     val popularity: Int,
     val uri: String
-)
+) {
+    var timeRange: String? = null
+}

@@ -13,6 +13,9 @@ class UpdateLocalTracksUseCaseImp @Inject constructor(
     private val trackRepository: TrackRepository
 ): UpdateLocalTracksUseCase {
     override suspend fun invoke(): ResultOf<Unit, ResponseError> {
+        //        TODO:
+        //        Antes de atualizar, validadar se é preciso de fato atualizar os itens
+        //        Criar aqui três tentativas para sucesso. Se falhar, retornar ResultOf.Error
         return trackRepository.updateSongs()
     }
 }
