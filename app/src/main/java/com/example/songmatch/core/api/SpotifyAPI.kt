@@ -31,7 +31,7 @@ interface SpotifyAPI {
 @JsonClass(generateAdapter = true)
 data class PagingObjectResponse<T>(
     val href: String,
-    val items: List<T>,
+    var items: List<T>,
     val limit: Int,
     val next: String?,
     val offset: Int,
@@ -75,7 +75,7 @@ data class SpotifyUserExternalUrlsResponse(
 @JsonClass(generateAdapter = true)
 data class UserSavedTracksResponse(
     @field:Json(name = "added_at") val addedAt: String,
-    val track: TrackResponse
+    var track: TrackResponse
 )
 
 @JsonClass(generateAdapter = true)
@@ -86,7 +86,8 @@ data class TrackResponse(
     val name: String,
     val type: String,
     val popularity: Int,
-    val uri: String
-) {
-    var timeRange: String? = null
-}
+    val uri: String,
+    var timeRange: String? = null,
+    var isSavedTrack: Boolean = false,
+    var isTopTrack: Boolean = false,
+)

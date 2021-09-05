@@ -52,6 +52,7 @@ class SessionLocalDataSourceImp @Inject constructor(
             imageUri = null,
             uri = null,
             name = name,
+            lastTrackUpdate = null
         )
         userDao.insertUser(user)
         return ResultOf.Success(Unit)

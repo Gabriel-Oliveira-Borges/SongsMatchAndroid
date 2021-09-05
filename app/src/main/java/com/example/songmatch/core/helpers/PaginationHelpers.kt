@@ -6,19 +6,19 @@ import com.example.songmatch.core.models.ResultOf
 
 suspend fun <T> getAllPaginatedItems(
     limit: Int,
-    offset: Int = 0,
+    initialOffset: Int = 0,
     block: suspend (limit: Int, offset: Int) -> PagingObjectResponse<T>
 ): ResultOf<List<T>, ResponseError.NetworkError> {
     return safeApiCall {
-        val resp = block(limit, offset)
-        if (!resp.hasNext) {
-            return@safeApiCall resp.items
-        }
+        var offset = initialOffset
+        val items = mutableListOf<T>()
 
-        return@safeApiCall resp.items + getAllPaginatedItems(
-            limit = limit,
-            offset = limit + offset,
-            block = block
-        ) as T
+        do {
+            val resp = block(limit, offset)
+            items.addAll(resp.items)
+            offset += limit
+        } while (resp.hasNext)
+
+        return@safeApiCall items
     }
 }

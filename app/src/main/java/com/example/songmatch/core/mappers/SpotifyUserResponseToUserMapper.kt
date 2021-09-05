@@ -13,7 +13,8 @@ class SpotifyUserResponseToUserMapper @Inject constructor() {
             token = token,
             email = from.email,
             imageUri = from.images.firstOrNull()?.url,
-            uri = from.uri
+            uri = from.uri,
+            lastTrackUpdate = null
         )
     }
 }

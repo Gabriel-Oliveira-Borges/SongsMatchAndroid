@@ -2,6 +2,7 @@ package com.example.songmatch.core.framework.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.songmatch.core.framework.room.daos.TrackDao
 import com.example.songmatch.core.framework.room.daos.UserDao
 import com.example.songmatch.core.framework.room.database.LocalDataBase
 import dagger.Module
@@ -21,4 +22,7 @@ class RoomModule {
 
     @Provides
     fun provideUserDAO(appDataBase: LocalDataBase): UserDao = appDataBase.getUserDao()
+
+    @Provides
+    fun provideTrackDAO(appDataBase: LocalDataBase): TrackDao = appDataBase.getTrackDao()
 }

@@ -15,7 +15,8 @@ class UserEntityToUserMapper @Inject constructor() : BaseMapper<UserEntity, User
                 email = from.email,
                 imageUri = from.imageUri,
                 uri = from.uri
-            )
+            ),
+            lastTrackUpdate = from.lastTrackUpdate
         )
     }
 }

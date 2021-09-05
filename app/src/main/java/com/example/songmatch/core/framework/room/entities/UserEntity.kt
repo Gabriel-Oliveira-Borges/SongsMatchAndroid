@@ -12,4 +12,5 @@ data class UserEntity(
     val imageUri: String?,
     val uri: String?,
     val name: String?,
+    val lastTrackUpdate: Date?,
 )
