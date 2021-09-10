@@ -8,8 +8,15 @@ import retrofit2.http.Query
 enum class TimeRange(val field: String) {
     SHORT_TERM("short_term"),
     MEDIUM_TERM("medium_term"),
-    LONG_TERM("long_term")
+    LONG_TERM("long_term");
+
+    companion object {
+        fun fromString(value: String?): TimeRange? {
+            return TimeRange.values().firstOrNull { it.field == value }
+        }
+    }
 }
+
 interface SpotifyAPI {
     @GET("/v1/me")
     suspend fun getUser(): SpotifyUserResponse
@@ -37,7 +44,7 @@ data class PagingObjectResponse<T>(
     val offset: Int,
     val previous: String?,
     val total: Int
- ) {
+) {
     val hasNext = next != null
     val nextOffset = offset + limit
 }
@@ -57,7 +64,7 @@ data class SpotifyUserResponse(
     val email: String?,
     val images: List<SpotityUserProfileImageResponse>,
     val uri: String,
-    @Json(name = "external_urls")val externalUrls: SpotifyUserExternalUrlsResponse
+    @Json(name = "external_urls") val externalUrls: SpotifyUserExternalUrlsResponse
 )
 
 @JsonClass(generateAdapter = true)

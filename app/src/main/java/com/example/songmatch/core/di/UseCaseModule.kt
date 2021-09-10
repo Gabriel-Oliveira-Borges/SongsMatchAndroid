@@ -17,4 +17,6 @@ abstract class UseCaseModule {
     @Binds abstract fun bindSaveUserSpotifyTokenUseCase(impl: SaveSpotifyUserUseCaseImp): SaveSpotifyUserUseCase
 
     @Binds abstract fun bindLogoutCurrentUserUseCase(impl: LogoutCurrentUserUseCaseImp): LogoutCurrentUserUseCase
+
+    @Binds abstract fun bindShouldUpdateTracksUseCase(impl: ShouldUpdateTracksUseCaseImp): ShouldUpdateTracksUseCase
 }

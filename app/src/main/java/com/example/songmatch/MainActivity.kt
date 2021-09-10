@@ -3,6 +3,7 @@ package com.example.songmatch
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
 import com.example.songmatch.login.presentation.SpotifyLoginFragment
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     @Inject lateinit var saveSpotifyUser: SaveSpotifyUserUseCase
+    private lateinit var appApplication: AppApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,7 +27,24 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.container, SpotifyLoginFragment.newInstance())
                 .commitNow()
+
+            appApplication = this.applicationContext as AppApplication
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        clearMainActivityReferencesInApplication()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        appApplication.setCurrentActivity(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        clearMainActivityReferencesInApplication()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -56,6 +75,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun clearMainActivityReferencesInApplication() {
+        val currentActivity = appApplication.getCurrentActivity()
+
+        if (this == currentActivity) {
+            appApplication.setCurrentActivity(null)
         }
     }
 

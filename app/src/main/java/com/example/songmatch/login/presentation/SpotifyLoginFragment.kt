@@ -40,7 +40,7 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
 
     override fun onLoginPressed() {
         viewModel.dispatchViewAction(
-            SpotifyLoginViewAction.RequestLogin(activity = this.requireActivity())
+            SpotifyLoginViewAction.RequestLogin
         )
     }
 

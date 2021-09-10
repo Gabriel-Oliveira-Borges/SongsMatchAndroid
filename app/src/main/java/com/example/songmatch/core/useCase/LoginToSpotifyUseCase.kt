@@ -1,23 +1,38 @@
 package com.example.songmatch.core.useCase
 
-import android.app.Activity
+import android.content.Context
+import com.example.songmatch.AppApplication
+import com.example.songmatch.core.domain.model.isTokenExpired
 import com.example.songmatch.login.presentation.CLIENT_ID
 import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationRequest
 import com.spotify.sdk.android.authentication.AuthenticationResponse
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 interface LoginToSpotifyUseCase {
-    operator fun invoke(receiverActivity: Activity)
+    operator fun invoke()
 }
 
-private val SPOTIFY_AUTH_SCOPES = arrayOf("streaming", "user-top-read", "user-read-playback-state", "user-modify-playback-state", "user-read-currently-playing", "playlist-modify-private", "user-follow-read", "user-library-read", "user-read-email", "user-read-private")
+private val SPOTIFY_AUTH_SCOPES = arrayOf(
+    "streaming",
+    "user-top-read",
+    "user-read-playback-state",
+    "user-modify-playback-state",
+    "user-read-currently-playing",
+    "playlist-modify-private",
+    "user-follow-read",
+    "user-library-read",
+    "user-read-email",
+    "user-read-private"
+)
 
 class LoginToSpotifyUseCaseImp @Inject constructor(
-): LoginToSpotifyUseCase {
-    override operator fun invoke(receiverActivity: Activity) {
+    @ApplicationContext private val context: Context
+) : LoginToSpotifyUseCase {
+    override operator fun invoke() {
         val builder: AuthenticationRequest.Builder =
             AuthenticationRequest.Builder(
                 CLIENT_ID,
@@ -28,7 +43,7 @@ class LoginToSpotifyUseCaseImp @Inject constructor(
         builder.setShowDialog(true)
         val request: AuthenticationRequest = builder.build()
 
-        // This will return its data in the `onActivityResult` of MainActivity
-        AuthenticationClient.openLoginActivity(receiverActivity, SPOTIFY_LOGIN_REQUEST_CODE, request)
+        val mainActivity = (context.applicationContext as AppApplication).getCurrentActivity()
+        AuthenticationClient.openLoginActivity(mainActivity, SPOTIFY_LOGIN_REQUEST_CODE, request)
     }
 }

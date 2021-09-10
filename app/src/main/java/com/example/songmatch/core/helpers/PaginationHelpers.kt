@@ -16,7 +16,7 @@ suspend fun <T> getAllPaginatedItems(
         do {
             val resp = block(limit, offset)
             items.addAll(resp.items)
-            offset += limit
+            offset = resp.nextOffset
         } while (resp.hasNext)
 
         return@safeApiCall items

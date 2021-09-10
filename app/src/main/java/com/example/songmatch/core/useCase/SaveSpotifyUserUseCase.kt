@@ -9,7 +9,6 @@ interface SaveSpotifyUserUseCase {
     suspend operator fun invoke(token: String, expiresIn: Int, name: String?): ResultOf<Unit, Unit>
 }
 
-// Todo: Esse token é válido por apenas 1 hora. Quando eu precisar atualizar as músicas, eu vou precisar pedir novamente pelo login. A parte boa é que fica salvo os dados do login
 class SaveSpotifyUserUseCaseImp @Inject constructor(
     private val sessionRepository: SessionRepository
 ): SaveSpotifyUserUseCase {

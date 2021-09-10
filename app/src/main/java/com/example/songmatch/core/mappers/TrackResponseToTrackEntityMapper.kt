@@ -15,16 +15,12 @@ class TrackResponseToTrackEntityMapper @Inject constructor(
             artistName = artist?.name,
             timeRange = from.timeRange,
             duration = from.duration,
-            id = from.id,
+            spotifyId = from.id,
             name = from.name,
             type = from.type,
             popularity = from.popularity,
             isTopTrack = from.isTopTrack,
             isSavedTrack = from.isSavedTrack
         )
-    }
-
-    fun mapList(from: List<TrackResponse>): List<TrackEntity> {
-        return from.map { map(it) }
     }
 }

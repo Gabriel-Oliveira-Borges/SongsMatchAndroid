@@ -11,7 +11,7 @@ data class TrackEntity(
     val artistName: String?,
     var timeRange: String? = null,
     val duration: String,
-    val id: String,
+    val spotifyId: String,
     val name: String,
     val type: String,
     val popularity: Int,
