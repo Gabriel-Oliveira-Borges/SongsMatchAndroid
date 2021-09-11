@@ -1,5 +1,6 @@
 package com.example.songmatch.core.api
 
+import com.example.songmatch.RequestInterruptedBySpotifyLogin
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import retrofit2.http.GET
@@ -17,23 +18,34 @@ enum class TimeRange(val field: String) {
     }
 }
 
+object SpotifyRequestPath {
+    const val getUser = "/v1/me"
+    const val getSavedTracks = "/v1/me/tracks"
+    const val getTopTracks = "/v1/me/top/tracks"
+}
+
 interface SpotifyAPI {
-    @GET("/v1/me")
+    @GET(SpotifyRequestPath.getUser)
     suspend fun getUser(): SpotifyUserResponse
 
-    @GET("/v1/me/tracks")
+    @GET(SpotifyRequestPath.getSavedTracks)
     suspend fun getUserSavedTracks(
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int
     ): PagingObjectResponse<UserSavedTracksResponse>
 
-    @GET("/v1/me/top/tracks")
+    @GET(SpotifyRequestPath.getTopTracks)
     suspend fun getUserTopTracks(
         @Query("limit") limit: Int = 50,
         @Query("offset") offset: Int,
         @Query("time_range") timeRange: String
     ): PagingObjectResponse<TrackResponse>
 }
+
+abstract class RequiresSpotifyToken{
+    abstract var requestId: RequestInterruptedBySpotifyLogin
+}
+
 
 @JsonClass(generateAdapter = true)
 data class PagingObjectResponse<T>(
@@ -81,9 +93,10 @@ data class SpotifyUserExternalUrlsResponse(
 
 @JsonClass(generateAdapter = true)
 data class UserSavedTracksResponse(
+    override var requestId: RequestInterruptedBySpotifyLogin = RequestInterruptedBySpotifyLogin.UPDATING_TRACKS,
     @field:Json(name = "added_at") val addedAt: String,
-    var track: TrackResponse
-)
+    var track: TrackResponse,
+): RequiresSpotifyToken()
 
 @JsonClass(generateAdapter = true)
 data class TrackResponse(

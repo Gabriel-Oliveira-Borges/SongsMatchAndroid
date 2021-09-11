@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     suspend fun insertTrack(trackEntity: TrackEntity)
 
     @Insert
@@ -21,6 +21,18 @@ interface TrackDao {
 
     @Query("SELECT * FROM TrackEntity WHERE timeRange == :timeRange")
     suspend fun getAllTracksOfTimeRange(timeRange: String): List<TrackEntity>
+
+    @Query("SELECT * FROM TrackEntity WHERE isTopTrack == :topTracks")
+    suspend fun getAllTracksWithTopTracks(topTracks: Boolean): List<TrackEntity>
+
+    @Query("SELECT * FROM TrackEntity WHERE isSavedTrack == :savedTracks")
+    suspend fun getAllTracksWithSavedTracks(savedTracks: Boolean): List<TrackEntity>
+
+    @Query("SELECT * FROM TrackEntity WHERE isSavedTrack == :savedTracks AND isTopTrack == :topTracks")
+    suspend fun getAllTracksWithSavedTracksAndTopTracks(savedTracks: Boolean, topTracks: Boolean): List<TrackEntity>
+
+    @Query("SELECT * FROM TrackEntity WHERE timeRange == :timeRange AND isTopTrack == :topTracks")
+    suspend fun getAllTracksWithTopTracksAndTimeRange(timeRange: String, topTracks: Boolean): List<TrackEntity>
 
     @Query("SELECT * FROM TrackEntity")
     fun observeTracks(): Flow<TrackEntity?>

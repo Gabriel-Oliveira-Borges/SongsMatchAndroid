@@ -18,6 +18,7 @@ class UpdateLocalTracksUseCaseImp @Inject constructor(
         if (shouldUpdateTracksUseCase()) {
             var triesLeft = 3
             var successful = false
+//          TODO: COLOCAR UM RETRY NESSAS CHAMADAS NO RETROFIT
             do {
                 trackRepository.updateTracks()
                     .onError { triesLeft-- }

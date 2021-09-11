@@ -17,7 +17,6 @@ interface GetUserTracksUseCase {
 }
 
 class GetUserTracksUseCaseImp @Inject constructor(
-    private val shouldUpdateTracksUseCase: ShouldUpdateTracksUseCase,
     private val updateTracksUseCase: UpdateLocalTracksUseCase,
     private val trackRepository: TrackRepository
 ) : GetUserTracksUseCase {
@@ -26,9 +25,7 @@ class GetUserTracksUseCaseImp @Inject constructor(
         savedTracks: Boolean?,
         timeRange: TimeRange?,
     ): ResultOf<List<Track>, ResponseError> {
-        if (shouldUpdateTracksUseCase()) {
-            updateTracksUseCase()
-        }
+        updateTracksUseCase()
         return trackRepository.getSavedTracks()
     }
 }

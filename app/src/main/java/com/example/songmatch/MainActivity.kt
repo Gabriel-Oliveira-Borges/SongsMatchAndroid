@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
+import com.example.songmatch.core.useCase.ShouldUpdateTracksUseCase
 import com.example.songmatch.login.presentation.SpotifyLoginFragment
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
+import com.example.songmatch.main.useCase.UpdateLocalTracksUseCase
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import dagger.hilt.android.AndroidEntryPoint
@@ -17,7 +19,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    @Inject lateinit var saveSpotifyUser: SaveSpotifyUserUseCase
+    @Inject
+    lateinit var saveSpotifyUser: SaveSpotifyUserUseCase
+    @Inject
+    lateinit var updateLocalTracks: UpdateLocalTracksUseCase
+
     private lateinit var appApplication: AppApplication
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,6 +69,7 @@ class MainActivity : AppCompatActivity() {
                             ).onError {
                                 notifyFragments(successful = false)
                             }.onSuccess {
+                                resumeInterruptedRequest()
                                 notifyFragments(successful = true)
                             }
                         }
@@ -96,6 +103,17 @@ class MainActivity : AppCompatActivity() {
                 it.onSpotifyLoginSuccess()
             else
                 it.onSpotifyLoginError()
+        }
+    }
+
+    private fun resumeInterruptedRequest() {
+        lifecycleScope.launch {
+            appApplication.getRequestsInterruptedBySpotifyLogin().forEach {
+                when (it) {
+                    RequestInterruptedBySpotifyLogin.UPDATING_TRACKS -> updateLocalTracks()
+                }
+                appApplication.dequeueRequestInterruptedBySpotifyLogin(it)
+            }
         }
     }
 }

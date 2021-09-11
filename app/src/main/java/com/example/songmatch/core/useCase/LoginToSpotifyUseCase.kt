@@ -43,7 +43,8 @@ class LoginToSpotifyUseCaseImp @Inject constructor(
         builder.setShowDialog(true)
         val request: AuthenticationRequest = builder.build()
 
-        val mainActivity = (context.applicationContext as AppApplication).getCurrentActivity()
-        AuthenticationClient.openLoginActivity(mainActivity, SPOTIFY_LOGIN_REQUEST_CODE, request)
+        (context.applicationContext as AppApplication).getCurrentActivity()?.let {
+            AuthenticationClient.openLoginActivity(it, SPOTIFY_LOGIN_REQUEST_CODE, request)
+        }
     }
 }

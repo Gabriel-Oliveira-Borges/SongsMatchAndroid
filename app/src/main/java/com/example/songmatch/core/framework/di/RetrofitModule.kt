@@ -1,13 +1,18 @@
 package com.example.songmatch.core.framework.di
 
+import android.content.Context
 import com.example.songmatch.core.api.SpotifyAPI
+import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.di.Names
 import com.example.songmatch.core.framework.retrofit.AuthInterceptor
 import com.example.songmatch.core.framework.room.daos.UserDao
+import com.example.songmatch.core.mappers.SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
+import com.example.songmatch.core.useCase.LoginToSpotifyUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
@@ -37,9 +42,14 @@ class RetrofitModule {
 
     @Provides
     @Singleton
-    fun providesAuthInterceptor(userDao: UserDao): OkHttpClient {
+    fun providesAuthInterceptor(
+        session: SessionLocalDataSource,
+        mapper: SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper,
+        loginToSpotifyUseCase: LoginToSpotifyUseCase,
+        @ApplicationContext context: Context,
+    ): OkHttpClient {
         return OkHttpClient.Builder()
-            .addInterceptor(AuthInterceptor(userDao))
+            .addInterceptor(AuthInterceptor(session, mapper, loginToSpotifyUseCase, context))
             .build()
     }
 
