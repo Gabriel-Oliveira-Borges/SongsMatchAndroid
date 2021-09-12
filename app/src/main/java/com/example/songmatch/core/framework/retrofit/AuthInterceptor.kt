@@ -14,6 +14,7 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 
 
+const val INVALID_SPOTIFY_TOKEN_MESSAGE = "Invalid Spotify Token"
 class AuthInterceptor(
     private val session: SessionLocalDataSource,
     private val spotifyRequestPathToRequestInterruptedBySpotifyLoginMapper: SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper,
@@ -35,12 +36,12 @@ class AuthInterceptor(
                 if (application.enqueueRequestInterruptedBySpotifyLogin(interruptedRequest)) {
                     loginToSpotifyUseCase()
                 }
-//                TODO: PENSAR NESSA RESPOSTA E COLOCAR NO mapHttpExceptionToResultError PARA DEVOLVER ResponseError.UnauthorizedError
+
                 return@runBlocking Response.Builder()
-                    .code(401) // Whatever code
-                    .body(ResponseBody.create(null, "")) // Whatever body
+                    .code(401)
+                    .body(ResponseBody.create(null, INVALID_SPOTIFY_TOKEN_MESSAGE))
                     .protocol(Protocol.HTTP_2)
-                    .message("Dummy response")
+                    .message(INVALID_SPOTIFY_TOKEN_MESSAGE)
                     .request(chain.request())
                     .build()
             } else {

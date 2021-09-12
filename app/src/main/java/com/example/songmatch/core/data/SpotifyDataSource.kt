@@ -14,7 +14,7 @@ interface SpotifyDataSource {
     suspend fun getSpotifyUser(
         token: String,
         expiresIn: Date
-    ): ResultOf<UserEntity, ResponseError.NetworkError>
+    ): ResultOf<UserEntity, ResponseError>
 
     suspend fun getUserSavedTracks(): ResultOf<List<TrackResponse>, ResponseError>
     suspend fun getUserTopTracks(): ResultOf<List<TrackResponse>, ResponseError>
@@ -27,7 +27,7 @@ class SpotifyDataSourceImpl @Inject constructor(
     override suspend fun getSpotifyUser(
         token: String,
         expiresIn: Date
-    ): ResultOf<UserEntity, ResponseError.NetworkError> {
+    ): ResultOf<UserEntity, ResponseError> {
         return safeApiCall { spotifyAPI.getUser() }.mapSuccess {
             mapper.map(from = it, expiresIn = expiresIn, token = token)
         }
@@ -63,7 +63,7 @@ class SpotifyDataSourceImpl @Inject constructor(
 
     private suspend fun getTopTrackOFSpecificTimeRange(
         timeRange: TimeRange
-    ): ResultOf<List<TrackResponse>, ResponseError.NetworkError> {
+    ): ResultOf<List<TrackResponse>, ResponseError> {
         return getAllPaginatedItems(limit = 50) { limit, offset ->
             spotifyAPI.getUserTopTracks(
                 limit = limit,

@@ -8,7 +8,7 @@ suspend fun <T> getAllPaginatedItems(
     limit: Int,
     initialOffset: Int = 0,
     block: suspend (limit: Int, offset: Int) -> PagingObjectResponse<T>
-): ResultOf<List<T>, ResponseError.NetworkError> {
+): ResultOf<List<T>, ResponseError> {
     return safeApiCall {
         var offset = initialOffset
         val items = mutableListOf<T>()

@@ -37,7 +37,6 @@ class TrackDataSourceImp @Inject constructor(
         return try {
             ResultOf.Success(
                 trackEntityToTrackMapper.mapList(
-//                    TODO: FAZER TODAS AS 8 POSSIBILIDADES!A
                     if (topTracks != null && savedTracks != null && timeRange != null) {
                         trackDao.getAllTracksWithTopTracksAndTimeRange(
                             timeRange = timeRange.field, topTracks = topTracks

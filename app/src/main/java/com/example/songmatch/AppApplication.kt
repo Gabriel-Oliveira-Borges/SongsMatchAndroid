@@ -9,7 +9,6 @@ import java.util.*
 @HiltAndroidApp
 class AppApplication : Application() {
     private var mCurrentActivity: Activity? = null
-//    Aceitar uma função que será passada pelo AuthInterceptor e deverá ser executada na MainActivity quando a autenticação for um sucesso
     private var requestInterruptedBySpotifyLogin =  LinkedList<RequestInterruptedBySpotifyLogin>()
 
     fun getRequestsInterruptedBySpotifyLogin() = requestInterruptedBySpotifyLogin

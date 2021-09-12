@@ -1,5 +1,6 @@
 package com.example.songmatch.core.helpers
 
+import com.example.songmatch.core.framework.retrofit.INVALID_SPOTIFY_TOKEN_MESSAGE
 import com.example.songmatch.core.models.ResponseError
 import com.example.songmatch.core.models.ResultOf
 import com.squareup.moshi.Json
@@ -21,7 +22,7 @@ import java.net.UnknownHostException
 suspend fun <T> safeApiCall(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     block: suspend () -> T
-): ResultOf<T, ResponseError.NetworkError> {
+): ResultOf<T, ResponseError> {
     return withContext(dispatcher) {
         try {
             mapResponse(block())
@@ -55,22 +56,28 @@ private fun mapHttpExceptionToResultError(
     errorBody: ResponseBody?,
     statusCode: Int,
     message: String,
-) = try {
+): ResultOf.Error<ResponseError> = try {
     val errorBodyString = errorBody?.string()
     val errorBodyResponse = if (shouldDeserialize(errorBodyString, statusCode)) {
         deserializeErrorBodyResponse(errorBodyString)
     } else null
 
-    ResultOf.Error(
-        ResponseError.NetworkError(
-            httpCode = statusCode,
-            httpMessage = message,
-            serverCode = errorBodyResponse?.code,
-            serverMessage = errorBodyResponse?.message,
-            localizedMessage = errorBodyResponse?.localizedMessage,
-            isConnectionError = false
+    if (errorBodyString == INVALID_SPOTIFY_TOKEN_MESSAGE) {
+        ResultOf.Error(
+            ResponseError.UnauthorizedError()
         )
-    )
+    } else {
+        ResultOf.Error(
+            ResponseError.NetworkError(
+                httpCode = statusCode,
+                httpMessage = message,
+                serverCode = errorBodyResponse?.code,
+                serverMessage = errorBodyResponse?.message,
+                localizedMessage = errorBodyResponse?.localizedMessage,
+                isConnectionError = false
+            )
+        )
+    }
 } catch (exception: Exception) {
     mapGenericExceptionToResultError(exception)
 }

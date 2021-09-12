@@ -17,7 +17,6 @@ interface GetUserTracksUseCase {
 }
 
 class GetUserTracksUseCaseImp @Inject constructor(
-    private val updateTracksUseCase: UpdateLocalTracksUseCase,
     private val trackRepository: TrackRepository
 ) : GetUserTracksUseCase {
     override suspend fun invoke(
@@ -25,7 +24,6 @@ class GetUserTracksUseCaseImp @Inject constructor(
         savedTracks: Boolean?,
         timeRange: TimeRange?,
     ): ResultOf<List<Track>, ResponseError> {
-        updateTracksUseCase()
         return trackRepository.getSavedTracks(
             topTracks = topTracks,
             savedTracks = savedTracks,

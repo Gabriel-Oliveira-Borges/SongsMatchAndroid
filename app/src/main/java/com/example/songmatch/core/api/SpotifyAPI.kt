@@ -28,6 +28,7 @@ interface SpotifyAPI {
     @GET(SpotifyRequestPath.getUser)
     suspend fun getUser(): SpotifyUserResponse
 
+    
     @GET(SpotifyRequestPath.getSavedTracks)
     suspend fun getUserSavedTracks(
         @Query("limit") limit: Int = 50,
