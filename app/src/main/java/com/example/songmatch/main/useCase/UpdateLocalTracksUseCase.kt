@@ -16,7 +16,7 @@ class UpdateLocalTracksUseCaseImp @Inject constructor(
 ) : UpdateLocalTracksUseCase {
     override suspend fun invoke(): ResultOf<Unit, ResponseError> {
         if (shouldUpdateTracksUseCase()) {
-            var triesLeft = 3
+            var triesLeft = 1
             var successful = false
 //          TODO: COLOCAR UM RETRY NESSAS CHAMADAS NO RETROFIT
             do {

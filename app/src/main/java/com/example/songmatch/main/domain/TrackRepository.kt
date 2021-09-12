@@ -29,7 +29,11 @@ class TrackRepositoryImp @Inject constructor(
         savedTracks: Boolean?,
         timeRange: TimeRange?,
     ): ResultOf<List<Track>, ResponseError> {
-        return trackDataSource.getSavedTracks()
+        return trackDataSource.getSavedTracks(
+            topTracks = topTracks,
+            savedTracks = savedTracks,
+            timeRange = timeRange
+        )
     }
 
     override suspend fun updateTracks(): ResultOf<Unit, ResponseError> {

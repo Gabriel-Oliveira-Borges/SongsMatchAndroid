@@ -49,13 +49,15 @@ class SpotifyDataSourceImpl @Inject constructor(
 
         getTopTrackOFSpecificTimeRange(TimeRange.SHORT_TERM)
             .onError { return ResultOf.Error(it) }
+            .onSuccess { tracks.addAll(it) }
 
         getTopTrackOFSpecificTimeRange(TimeRange.MEDIUM_TERM)
             .onError { return ResultOf.Error(it) }
+            .onSuccess { tracks.addAll(it) }
 
         getTopTrackOFSpecificTimeRange(TimeRange.LONG_TERM)
             .onError { return ResultOf.Error(it) }
-
+            .onSuccess { tracks.addAll(it) }
         return ResultOf.Success(tracks)
     }
 

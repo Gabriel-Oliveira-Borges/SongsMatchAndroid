@@ -26,6 +26,10 @@ class GetUserTracksUseCaseImp @Inject constructor(
         timeRange: TimeRange?,
     ): ResultOf<List<Track>, ResponseError> {
         updateTracksUseCase()
-        return trackRepository.getSavedTracks()
+        return trackRepository.getSavedTracks(
+            topTracks = topTracks,
+            savedTracks = savedTracks,
+            timeRange = timeRange
+        )
     }
 }
