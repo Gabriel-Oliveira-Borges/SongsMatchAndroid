@@ -1,8 +1,7 @@
-package com.example.songmatch.core.useCase
+package com.example.songmatch.login.useCase
 
 import android.content.Context
 import com.example.songmatch.AppApplication
-import com.example.songmatch.core.domain.model.isTokenExpired
 import com.example.songmatch.login.presentation.CLIENT_ID
 import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE

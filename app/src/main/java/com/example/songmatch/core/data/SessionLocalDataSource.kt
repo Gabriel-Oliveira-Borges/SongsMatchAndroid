@@ -4,7 +4,6 @@ import com.example.songmatch.core.domain.model.User
 import com.example.songmatch.core.framework.room.daos.TrackDao
 import com.example.songmatch.core.framework.room.daos.UserDao
 import com.example.songmatch.core.framework.room.entities.UserEntity
-import com.example.songmatch.core.mappers.SpotifyUserResponseToUserMapper
 import com.example.songmatch.core.mappers.UserEntityToUserMapper
 import com.example.songmatch.core.models.ResultOf
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +48,8 @@ class SessionLocalDataSourceImp @Inject constructor(
     ): ResultOf<Unit, Unit> {
         userDao.deleteUsers()
         val user = UserEntity(
-            token = token,
-            tokenExpiration = expiresIn,
+            spotifyToken = token,
+            spotifyTokenExpiration = expiresIn,
             email = null,
             imageUri = null,
             uri = null,
@@ -78,7 +77,7 @@ class SessionLocalDataSourceImp @Inject constructor(
         return user?.let {
             ResultOf.Success(
                 userDao.updateUserToken(
-                    oldToken = user.token,
+                    oldToken = user.spotifyToken,
                     newToken = token,
                     tokenExpiration = expiresIn
                 )

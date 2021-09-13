@@ -27,6 +27,7 @@ suspend fun <T> safeApiCall(
         try {
             mapResponse(block())
         } catch (exception: Exception) {
+//            TODO: Tratar Erros apontados pelos validators middleware da minha api (Tipo email inválido)
             if (exception is HttpException) {
                 mapHttpExceptionToResultError(
                     errorBody = exception.response()?.errorBody(),

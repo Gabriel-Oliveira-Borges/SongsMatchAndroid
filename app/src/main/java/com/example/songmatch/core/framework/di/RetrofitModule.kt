@@ -5,10 +5,8 @@ import com.example.songmatch.core.api.SpotifyAPI
 import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.di.Names
 import com.example.songmatch.core.framework.retrofit.AuthInterceptor
-import com.example.songmatch.core.framework.room.daos.UserDao
 import com.example.songmatch.core.mappers.SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper
-import com.example.songmatch.core.useCase.GetCurrentUserUseCase
-import com.example.songmatch.core.useCase.LoginToSpotifyUseCase
+import com.example.songmatch.login.useCase.LoginToSpotifyUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

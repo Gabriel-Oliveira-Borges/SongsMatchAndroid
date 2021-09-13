@@ -3,7 +3,6 @@ package com.example.songmatch.core.domain
 import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.data.SpotifyDataSource
 import com.example.songmatch.core.domain.model.User
-import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.models.ResultOf
 import java.util.*
 import javax.inject.Inject
@@ -16,7 +15,7 @@ interface SessionRepository {
 
 class SessionRepositoryImp @Inject constructor(
     private val sessionLocalDataSource: SessionLocalDataSource,
-    private val spotifyDataSource: SpotifyDataSource
+    private val spotifyDataSource: SpotifyDataSource,
 ) : SessionRepository {
 
     override suspend fun getCurrentUser(): ResultOf<User?, Unit> {

@@ -10,8 +10,8 @@ class UserEntityToUserMapper @Inject constructor() : BaseMapper<UserEntity, User
         return User(
             name = from.name,
             spotifyUser = SpotifyUser(
-                token = from.token,
-                tokenExpiration = from.tokenExpiration,
+                token = from.spotifyToken,
+                tokenExpiration = from.spotifyTokenExpiration,
                 email = from.email,
                 imageUri = from.imageUri,
                 uri = from.uri

@@ -22,6 +22,6 @@ interface UserDao {
     @Update
     suspend fun updateUser(userEntity: UserEntity)
 
-    @Query("UPDATE UserEntity SET token = :newToken, tokenExpiration = :tokenExpiration WHERE token = :oldToken")
+    @Query("UPDATE UserEntity SET spotifyToken = :newToken, spotifyTokenExpiration = :tokenExpiration WHERE spotifyToken = :oldToken")
     suspend fun updateUserToken(oldToken: String, newToken: String, tokenExpiration: Date)
 }

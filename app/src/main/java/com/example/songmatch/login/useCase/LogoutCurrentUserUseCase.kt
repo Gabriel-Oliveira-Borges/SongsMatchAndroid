@@ -1,4 +1,4 @@
-package com.example.songmatch.core.useCase
+package com.example.songmatch.login.useCase
 
 import com.example.songmatch.core.domain.SessionRepository
 import com.example.songmatch.core.models.ResultOf

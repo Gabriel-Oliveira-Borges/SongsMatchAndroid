@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.songmatch.core.framework.room.daos.TrackDao
 import com.example.songmatch.core.framework.room.entities.TrackEntity
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
@@ -67,7 +68,7 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
             object : Connector.ConnectionListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
-                    GlobalScope.launch {
+                    lifecycleScope.launch {
                         tracks.addAll(trackDao.getAllTracks())
                     }
                     playerListener()

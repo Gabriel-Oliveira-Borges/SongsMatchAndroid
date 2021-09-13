@@ -19,6 +19,20 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+//    TODO: Ao entrar em uma sala, criar um websocket para ficar ouvindo as configurações da sala
+//     (quais músicas pegar, quem já está na sala, quem já deu upload de todas as suas músicas, se a playlist já foi gerada)
+
+//   TODO: Depois de gerada a playlist, criar um "outro websocket", que irá ficar escutando sobre a música que está sendo reproduzida
+//   (Deve ser possível que todos os usuários consigam controlar a música, logo preciso de eventos para play, pause, back e next
+//   Como o backend não vai guardar a playlist, enviar o index pra musica ao dar next/back
+
+//    Docs:
+//    https://socket.io/docs/v4/server-api/,
+//    https://socket.io/blog/native-socket-io-and-android/
+//    https://socket.io/blog/socket-io-on-ios/ e https://drive.google.com/drive/u/1/folders/1x3TmfwQtZxM3d60mqhNzHa78jvq3zmsw
+
+
     @Inject
     lateinit var saveSpotifyUser: SaveSpotifyUserUseCase
     @Inject

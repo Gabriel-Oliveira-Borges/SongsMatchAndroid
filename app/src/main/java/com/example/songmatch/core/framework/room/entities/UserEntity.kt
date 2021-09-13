@@ -6,8 +6,9 @@ import java.util.*
 
 @Entity
 data class UserEntity(
-    @PrimaryKey val token: String,
-    val tokenExpiration: Date,
+    @PrimaryKey val spotifyToken: String,
+    val spotifyTokenExpiration: Date,
+//    val remoteToken: String?,
     val email: String?,
     val imageUri: String?,
     val uri: String?,

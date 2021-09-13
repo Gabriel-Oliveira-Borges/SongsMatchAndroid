@@ -5,7 +5,7 @@ import com.example.songmatch.AppApplication
 import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.domain.model.isTokenExpired
 import com.example.songmatch.core.mappers.SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper
-import com.example.songmatch.core.useCase.LoginToSpotifyUseCase
+import com.example.songmatch.login.useCase.LoginToSpotifyUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

@@ -9,8 +9,8 @@ class SpotifyUserResponseToUserMapper @Inject constructor() {
     fun map(from: SpotifyUserResponse, expiresIn: Date, token: String): UserEntity {
         return UserEntity(
             name = from.displayName,
-            tokenExpiration = expiresIn,
-            token = token,
+            spotifyTokenExpiration = expiresIn,
+            spotifyToken = token,
             email = from.email,
             imageUri = from.images.firstOrNull()?.url,
             uri = from.uri,
