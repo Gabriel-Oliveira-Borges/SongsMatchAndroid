@@ -8,7 +8,7 @@ import java.util.*
 data class UserEntity(
     @PrimaryKey val spotifyToken: String,
     val spotifyTokenExpiration: Date,
-//    val remoteToken: String?,
+    val remoteToken: String?,
     val email: String?,
     val imageUri: String?,
     val uri: String?,
