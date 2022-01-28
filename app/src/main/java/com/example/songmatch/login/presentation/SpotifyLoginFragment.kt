@@ -34,7 +34,7 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observeActions()
+        observeActions() //TODO: Where should this go? Is it correct here?
     }
 
 

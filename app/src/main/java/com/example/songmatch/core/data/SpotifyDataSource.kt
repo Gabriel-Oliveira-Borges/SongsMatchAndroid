@@ -74,6 +74,7 @@ class SpotifyDataSourceImpl @Inject constructor(
             it.map { track ->
                 track.timeRange = timeRange.field
                 track.isTopTrack = true
+                track
             }
         }
     }
