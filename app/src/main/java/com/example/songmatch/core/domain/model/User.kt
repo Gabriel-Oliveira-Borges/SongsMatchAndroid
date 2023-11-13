@@ -21,7 +21,7 @@ data class User(
 data class SpotifyUser(
     val token: String,
     val tokenExpiration: Date,
-    val email: String?, //TODO: O email é a minha primary key do backend. Se ele não retornar um email da request do spotify, eu preciso pedir por ele e aí sim criar o usuario no backend
+    val email: String?,
     val imageUri: String?,
     val uri: String?
 )

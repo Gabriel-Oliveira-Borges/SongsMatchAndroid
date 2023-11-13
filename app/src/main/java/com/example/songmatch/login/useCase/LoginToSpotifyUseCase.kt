@@ -36,7 +36,7 @@ class LoginToSpotifyUseCaseImp @Inject constructor(
             AuthenticationRequest.Builder(
                 CLIENT_ID,
                 AuthenticationResponse.Type.TOKEN,
-                REDIRECT_URI // TODO: Mudar isso e ver pra que serve e como configurar corretamente
+                REDIRECT_URI
             )
         builder.setScopes(SPOTIFY_AUTH_SCOPES)
         builder.setShowDialog(true)

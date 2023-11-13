@@ -9,6 +9,7 @@ import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
 import com.example.songmatch.player.presentation.PlayerFragment
+import com.example.songmatch.roomSelection.presentation.RoomSelectionFragment
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.container, PlayerFragment.newInstance())
+                .replace(R.id.container, RoomSelectionFragment.newInstance())
                 .commitNow()
 
             appApplication = this.applicationContext as AppApplication

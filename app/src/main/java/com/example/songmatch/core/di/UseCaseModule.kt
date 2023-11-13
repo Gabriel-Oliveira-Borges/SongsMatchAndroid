@@ -10,7 +10,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
-//Todo: Study more about the hilt's components (https://developer.android.com/training/dependency-injection/hilt-android#generated-components)
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class UseCaseModule {

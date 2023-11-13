@@ -18,7 +18,6 @@ import java.net.ConnectException
 import java.net.HttpURLConnection
 import java.net.UnknownHostException
 
-//        https://medium.com/nerd-for-tech/safe-retrofit-calls-extension-with-kotlin-coroutines-for-android-in-2021-part-ii-fd55842951cf e https://dev.to/eagskunst/making-safe-api-calls-with-retrofit-and-coroutines-1121
 suspend fun <T> safeApiCall(
     dispatcher: CoroutineDispatcher = Dispatchers.IO,
     block: suspend () -> T
@@ -27,7 +26,6 @@ suspend fun <T> safeApiCall(
         try {
             mapResponse(block())
         } catch (exception: Exception) {
-//            TODO: Tratar Erros apontados pelos validators middleware da minha api (Tipo email inválido)
             if (exception is HttpException) {
                 mapHttpExceptionToResultError(
                     errorBody = exception.response()?.errorBody(),
