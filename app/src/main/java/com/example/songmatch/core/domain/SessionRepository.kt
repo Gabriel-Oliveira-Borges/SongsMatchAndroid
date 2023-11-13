@@ -1,6 +1,5 @@
 package com.example.songmatch.core.domain
 
-import com.example.songmatch.core.data.RemoteDataSource
 import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.data.SpotifyDataSource
 import com.example.songmatch.core.domain.model.User
@@ -17,8 +16,6 @@ interface SessionRepository {
 class SessionRepositoryImp @Inject constructor(
     private val sessionLocalDataSource: SessionLocalDataSource,
     private val spotifyDataSource: SpotifyDataSource,
-    private val remoteDataSource: RemoteDataSource,
-
 ) : SessionRepository {
 
     override suspend fun getCurrentUser(): ResultOf<User?, Unit> {
@@ -28,9 +25,7 @@ class SessionRepositoryImp @Inject constructor(
     override suspend fun saveUser(token: String, expiresIn: Date, name: String?): ResultOf<Unit, Unit> {
         return sessionLocalDataSource.saveUser(token, expiresIn, name).onSuccess {
             spotifyDataSource.getSpotifyUser(token = token, expiresIn = expiresIn).onSuccess {
-                remoteDataSource.saveUser(it).onSuccess { updatedEntity ->
-                    sessionLocalDataSource.saveUser(userEntity = updatedEntity)
-                }
+                sessionLocalDataSource.saveUser(userEntity = it)
             }.onError {
                 sessionLocalDataSource.removeUser()
             }

@@ -1,7 +1,6 @@
 package com.example.songmatch.core.framework.di
 
 import android.content.Context
-import com.example.songmatch.core.api.RemoteAPI
 import com.example.songmatch.core.api.SpotifyAPI
 import com.example.songmatch.core.data.SessionLocalDataSource
 import com.example.songmatch.core.di.Names
@@ -20,7 +19,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Named
 
 private const val BASE_SPOTIFY_URL = "https://api.spotify.com"
-private const val BASE_APP_API_URL = "http://10.0.2.2:3000"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -30,13 +28,6 @@ class RetrofitModule {
     @Named(Names.Retrofit.SPOTIFY)
     fun provideSpotifyRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return provideRetrofit(baseURL = BASE_SPOTIFY_URL, okHttpClient = okHttpClient)
-    }
-
-    @Provides
-    @Singleton
-    @Named(Names.Retrofit.REMOTE_API)
-    fun provideAppApiRetrofit(): Retrofit {
-        return provideRetrofit(baseURL = BASE_APP_API_URL)
     }
 
     @Provides
@@ -55,12 +46,6 @@ class RetrofitModule {
     @Provides
     fun provideSpotifyAPI(@Named(Names.Retrofit.SPOTIFY) retrofit: Retrofit): SpotifyAPI {
         return retrofit.create(SpotifyAPI::class.java)
-    }
-
-//    TODO: ADICIONAR INTERCEPTOR AQUI
-    @Provides
-    fun provideRemoteAPI(@Named(Names.Retrofit.REMOTE_API) retrofit: Retrofit): RemoteAPI {
-        return retrofit.create(RemoteAPI::class.java)
     }
 
     private fun provideRetrofit(baseURL: String, okHttpClient: OkHttpClient? = null): Retrofit {

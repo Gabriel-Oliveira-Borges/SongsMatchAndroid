@@ -19,6 +19,6 @@ suspend fun <T> getAllPaginatedItems(
             offset = resp.nextOffset
         } while (resp.hasNext)
 
-        return@safeApiCall items
+        return@safeApiCall  items
     }
 }

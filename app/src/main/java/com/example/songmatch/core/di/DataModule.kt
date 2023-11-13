@@ -22,12 +22,4 @@ abstract class DataModule {
     @Singleton
     @Binds
     abstract fun bindSpotifyDataSource(imp: SpotifyDataSourceImpl): SpotifyDataSource
-
-    @Singleton
-    @Binds
-    abstract fun bindTrackDataSource(imp: TrackDataSourceImp): TrackDataSource
-
-    @Singleton
-    @Binds
-    abstract fun bindRemoteDataSource(imp: RemoteDataSourceImp): RemoteDataSource
 }

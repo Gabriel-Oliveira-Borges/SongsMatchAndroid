@@ -30,12 +30,9 @@ class AuthInterceptor(
             val interruptedRequest =
                 spotifyRequestPathToRequestInterruptedBySpotifyLoginMapper.map("/${path}")
             val user = session.getCurrentUser().handleResult()
-            val application = (context.applicationContext as AppApplication)
 
             if (interruptedRequest != null && (user == null || user.isTokenExpired())) {
-                if (application.enqueueRequestInterruptedBySpotifyLogin(interruptedRequest)) {
-                    loginToSpotifyUseCase()
-                }
+                loginToSpotifyUseCase()
 
                 return@runBlocking Response.Builder()
                     .code(401)

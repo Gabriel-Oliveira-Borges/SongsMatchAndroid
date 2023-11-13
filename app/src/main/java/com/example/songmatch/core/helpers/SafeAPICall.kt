@@ -88,7 +88,9 @@ private fun shouldDeserialize(
     statusCode: Int,
 ) = !errorBody.isNullOrEmpty() &&
         statusCode != HttpURLConnection.HTTP_FORBIDDEN &&
-        statusCode !in HttpURLConnection.HTTP_INTERNAL_ERROR..600
+        HttpURLConnection.HTTP_INTERNAL_ERROR < statusCode &&
+        statusCode < 600
+
 
 private fun deserializeErrorBodyResponse(errorBody: String?): ErrorBodyResponse? = try {
     MoshiAdapterApiCall.moshiAdapter.fromJson(errorBody!!)

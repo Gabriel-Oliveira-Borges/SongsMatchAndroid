@@ -1,7 +1,6 @@
 package com.example.songmatch.core.data
 
 import com.example.songmatch.core.domain.model.User
-import com.example.songmatch.core.framework.room.daos.TrackDao
 import com.example.songmatch.core.framework.room.daos.UserDao
 import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.mappers.UserEntityToUserMapper
@@ -23,7 +22,6 @@ interface SessionLocalDataSource {
 
 class SessionLocalDataSourceImp @Inject constructor(
     private val userDao: UserDao,
-    private val tracksDao: TrackDao,
     private val userEntityToUserMapper: UserEntityToUserMapper
 ) : SessionLocalDataSource {
     override suspend fun getCurrentUser(): ResultOf<User?, Unit> {
@@ -37,7 +35,6 @@ class SessionLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun logoutCurrentUser(): ResultOf<Unit, Unit> {
-        tracksDao.deleteTracks()
         return ResultOf.Success(userDao.deleteUsers())
     }
 
@@ -87,7 +84,6 @@ class SessionLocalDataSourceImp @Inject constructor(
     }
 
     override suspend fun removeUser(): ResultOf<Unit, Unit> {
-        tracksDao.deleteTracks()
         return ResultOf.Success(userDao.deleteUsers())
     }
 }

@@ -35,7 +35,6 @@ class SharedPreferencesDataSourceImp @Inject constructor(
         }
     }
 
-//    TODO: TESTAR COM TODOS OS TIPOS DE DADOS SUPORTADOS!
     override fun <T> getValue(key: String, defaultValue: T): ResultOf<T, Unit> {
         return when (defaultValue) {
             is String -> ResultOf.Success(sharedPreferences.get(key, defaultValue as String) as T)

@@ -8,22 +8,20 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.songmatch.core.framework.room.daos.TrackDao
-import com.example.songmatch.core.framework.room.entities.TrackEntity
-import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
+import com.example.songmatch.core.api.TrackResponse
 import com.example.songmatch.databinding.SpotifyLoginFragmentBinding
 import com.example.songmatch.login.presentation.CLIENT_ID
 import com.example.songmatch.login.presentation.REDIRECT_URI
-import com.example.songmatch.login.presentation.SpotifyLoginFragment
 import com.example.songmatch.login.presentation.SpotifyLoginViewModel
 import com.example.songmatch.login.presentation.listener.SpotifyLoginFragmentListener
+import com.example.songmatch.login.presentation.model.SpotifyLoginViewAction
+import com.example.songmatch.main.domain.TrackRepository
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,8 +34,7 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
     private val viewModel: SpotifyLoginViewModel by viewModels()
     private lateinit var binding: SpotifyLoginFragmentBinding
     @Inject
-    lateinit var trackDao: TrackDao
-    private val tracks = mutableListOf<TrackEntity>()
+    lateinit var tracksRepository: TrackRepository
     private var songIndex = 0
 
     override fun onCreateView(
@@ -52,8 +49,13 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
         }.root
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.dispatchViewAction(SpotifyLoginViewAction.GetUserTracks)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)
     }
 
@@ -69,10 +71,9 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
                 override fun onConnected(spotifyAppRemote: SpotifyAppRemote) {
                     mSpotifyAppRemote = spotifyAppRemote
                     lifecycleScope.launch {
-                        tracks.addAll(trackDao.getAllTracks())
+                        playerListener()
+                        playSong(viewModel.tracks.firstOrNull()?.uri)
                     }
-                    playerListener()
-                    playSong(tracks[songIndex].uri)
                 }
 
                 override fun onFailure(throwable: Throwable) {
@@ -84,7 +85,7 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
             })
     }
 
-    private fun playSong(uri: String = "spotify:track:1wsRitfRRtWyEapl0q22o8") {
+    private fun playSong(uri: String? = "spotify:track:1wsRitfRRtWyEapl0q22o8") {
         mSpotifyAppRemote?.playerApi?.play(uri)
     }
 
@@ -109,8 +110,12 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
             connectToSpotifyApp()
         else {
             songIndex++
-            playSong(tracks[songIndex].uri)
+            playSong(viewModel.tracks[songIndex].uri)
         }
+    }
+
+    companion object {
+        fun newInstance() = PlayerFragment()
     }
 
 }
