@@ -2,16 +2,12 @@ package com.example.songmatch
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavHost
 import androidx.navigation.fragment.NavHostFragment
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
-import com.example.songmatch.player.presentation.PlayerFragment
-import com.example.songmatch.roomSelection.presentation.RoomSelectionFragment
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import dagger.hilt.android.AndroidEntryPoint

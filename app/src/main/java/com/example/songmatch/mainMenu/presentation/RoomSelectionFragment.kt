@@ -1,4 +1,4 @@
-package com.example.songmatch.roomSelection.presentation
+package com.example.songmatch.mainMenu.presentation
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.songmatch.databinding.RoomSelectionBinding
-import com.example.songmatch.roomSelection.presentation.model.RoomSelectionViewAction
+import com.example.songmatch.mainMenu.presentation.model.RoomSelectionViewAction
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

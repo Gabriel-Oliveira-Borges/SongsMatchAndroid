@@ -1,4 +1,4 @@
-package com.example.songmatch.roomSelection.presentation.listener
+package com.example.songmatch.mainMenu.presentation.listener
 
 interface RoomSelectionFragmentListener {
     fun onJoinRoom()

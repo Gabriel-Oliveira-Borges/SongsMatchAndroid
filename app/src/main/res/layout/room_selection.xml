@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.roomSelection.presentation.RoomSelectionViewModel" />
+            type="com.example.songmatch.mainMenu.presentation.RoomSelectionViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

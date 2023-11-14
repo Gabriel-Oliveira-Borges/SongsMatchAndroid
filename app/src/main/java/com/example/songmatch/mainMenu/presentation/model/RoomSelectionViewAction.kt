@@ -1,4 +1,4 @@
-package com.example.songmatch.roomSelection.presentation.model
+package com.example.songmatch.mainMenu.presentation.model
 
 sealed class RoomSelectionViewAction  {
     object Init: RoomSelectionViewAction()

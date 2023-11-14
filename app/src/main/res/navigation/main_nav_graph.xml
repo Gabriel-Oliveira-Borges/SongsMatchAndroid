@@ -7,6 +7,6 @@
     <fragment
         tools:layout="@layout/room_selection"
         android:id="@+id/roomSelectionFragment"
-        android:name="com.example.songmatch.roomSelection.presentation.RoomSelectionFragment"
+        android:name="com.example.songmatch.mainMenu.presentation.RoomSelectionFragment"
         android:label="RoomSelectionFragment" />
 </navigation>
