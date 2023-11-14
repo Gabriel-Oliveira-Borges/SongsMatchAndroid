@@ -22,4 +22,8 @@ abstract class DataModule {
     @Singleton
     @Binds
     abstract fun bindSpotifyDataSource(imp: SpotifyDataSourceImpl): SpotifyDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindFirebaseDataSource(imp: FirebaseDataSourceImp): FirebaseDataSource
 }

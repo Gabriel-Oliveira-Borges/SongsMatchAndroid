@@ -28,10 +28,13 @@ class InitViewModel @Inject constructor(
         viewModelScope.launch {
             val currentUser = getCurrentUserUseCase().handleResult()
 
-            if (currentUser?.isTokenExpired() == false) {
-                navigation.postValue(Navigation.OpenRoomSelectionFlow)
-            } else {
+            if (currentUser == null) {
                 navigation.postValue(Navigation.OpenAuthenticationFlow)
+            } else if (currentUser.isTokenExpired()) {
+                // TODO: Delete user data from firebase
+                navigation.postValue(Navigation.OpenAuthenticationFlow)
+            } else {
+                navigation.postValue(Navigation.OpenRoomSelectionFlow)
             }
         }
     }

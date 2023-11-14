@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "284111826889",
+    "project_id": "songsmatch-6c4a6",
+    "storage_bucket": "songsmatch-6c4a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:284111826889:android:4484c820f3479c062d4218",
+        "android_client_info": {
+          "package_name": "com.example.songmatch"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwAYpiINctLU73e1g7DYG5RIgrGkSo4AU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
