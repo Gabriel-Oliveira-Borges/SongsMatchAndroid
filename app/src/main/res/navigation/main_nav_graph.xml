@@ -13,7 +13,7 @@
             android:id="@+id/action_roomSelectionFragment_to_joinRoomFragment"
             app:destination="@id/joinRoomFragment"
             app:popUpTo="@id/roomSelectionFragment"
-            app:popUpToInclusive="true" />
+            app:popUpToInclusive="false" />
     </fragment>
     <fragment
         tools:layout="@layout/join_room_fragment"
