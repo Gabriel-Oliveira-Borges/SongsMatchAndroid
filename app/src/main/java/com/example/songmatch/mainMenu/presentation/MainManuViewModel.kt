@@ -4,21 +4,21 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
-import com.example.songmatch.mainMenu.presentation.model.RoomSelectionViewAction
-import com.example.songmatch.mainMenu.presentation.model.RoomSelectionViewState
+import com.example.songmatch.mainMenu.presentation.model.MainMenuViewAction
+import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel()
-class RoomSelectionViewModel @Inject constructor(
+class MainManuViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase
-): BaseViewModel<RoomSelectionViewAction, RoomSelectionViewState>() {
-    override val viewState = RoomSelectionViewState()
+): BaseViewModel<MainMenuViewAction, MainMenuViewState>() {
+    override val viewState = MainMenuViewState()
 
-    override fun dispatchViewAction(action: RoomSelectionViewAction) {
+    override fun dispatchViewAction(action: MainMenuViewAction) {
         when (action) {
-            is RoomSelectionViewAction.Init -> getCurrentUser()
+            is MainMenuViewAction.Init -> getCurrentUser()
         }
     }
 
@@ -27,7 +27,7 @@ class RoomSelectionViewModel @Inject constructor(
     }
 
     fun onJoinRoom() {
-        Log.d("RoomSelection","on join Room")
+        viewState.action.postValue(MainMenuViewState.Action.NavigateToJoinRoom)
     }
 
     private fun getCurrentUser() {

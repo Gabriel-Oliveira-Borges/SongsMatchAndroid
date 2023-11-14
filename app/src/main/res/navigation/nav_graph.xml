@@ -14,14 +14,12 @@
     <action
         android:id="@+id/action_global_to_authentication_nav_graph"
         app:destination="@id/authentication_nav_graph"
-        app:popUpToInclusive="true"
-        app:popUpTo="@id/initFragment"/>
+       />
 
     <action
         android:id="@+id/action_global_to_main_nav_graph"
         app:destination="@id/main_nav_graph"
-        app:popUpToInclusive="true"
-        app:popUpTo="@id/initFragment" />
+        />
 
     <!-- Authentication flow -->
     <include app:graph="@navigation/authentication_nav_graph" />
