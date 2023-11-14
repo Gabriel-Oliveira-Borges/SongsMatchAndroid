@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavHost
+import androidx.navigation.fragment.NavHostFragment
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
@@ -28,10 +30,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, RoomSelectionFragment.newInstance())
-                .commitNow()
-
             appApplication = this.applicationContext as AppApplication
         }
     }
@@ -91,7 +89,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getAllSpotifyAuthFragment(): List<SpotifyAuthBaseFragment> {
-        return supportFragmentManager.fragments.filterIsInstance<SpotifyAuthBaseFragment>()
+        return supportFragmentManager
+            .fragments
+            .filterIsInstance<NavHostFragment>()
+            .firstOrNull()
+            ?.childFragmentManager
+            ?.fragments
+            ?.filterIsInstance<SpotifyAuthBaseFragment>() ?: emptyList()
     }
 
     private fun notifyFragments(successful: Boolean) {

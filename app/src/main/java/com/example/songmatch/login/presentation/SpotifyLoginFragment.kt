@@ -7,6 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavDirections
+import androidx.navigation.NavGraphNavigator
+import com.example.songmatch.NavGraphDirections
+import com.example.songmatch.core.presentation.InitFragmentDirections
 import com.example.songmatch.login.presentation.listener.SpotifyLoginFragmentListener
 import com.example.songmatch.databinding.SpotifyLoginFragmentBinding
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
@@ -45,12 +49,12 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
     }
 
     override fun onSpotifyLoginError() {
+        //TODO: Alert user!
         Log.d("Blah", "Erro ao fazer login")
     }
 
     override fun onSpotifyLoginSuccess() {
-
-        Log.d("Blah", "Sucesso ao fazer login")
+        navController.navigate(NavGraphDirections.actionGlobalToMainNavGraph())
     }
 
     private fun observeActions() {

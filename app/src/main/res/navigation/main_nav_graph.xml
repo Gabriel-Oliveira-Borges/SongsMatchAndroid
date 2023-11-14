@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/spotifyLoginFragment">
+    app:startDestination="@id/roomSelectionFragment">
     <fragment
-        tools:layout="@layout/spotify_login_fragment"
-        android:id="@+id/spotifyLoginFragment"
-        android:name="com.example.songmatch.login.presentation.SpotifyLoginFragment"
-        android:label="SpotifyLoginFragment" />
+        tools:layout="@layout/room_selection"
+        android:id="@+id/roomSelectionFragment"
+        android:name="com.example.songmatch.roomSelection.presentation.RoomSelectionFragment"
+        android:label="RoomSelectionFragment" />
 </navigation>

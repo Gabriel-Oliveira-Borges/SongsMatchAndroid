@@ -1,4 +1,4 @@
-package com.example.songmatch.main.domain
+package com.example.songmatch.core.domain
 
 import com.example.songmatch.core.api.TrackResponse
 import com.example.songmatch.core.data.SpotifyDataSource

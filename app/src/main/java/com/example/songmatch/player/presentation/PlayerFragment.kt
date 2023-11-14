@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.example.songmatch.core.api.TrackResponse
 import com.example.songmatch.databinding.SpotifyLoginFragmentBinding
 import com.example.songmatch.login.presentation.CLIENT_ID
 import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.login.presentation.SpotifyLoginViewModel
 import com.example.songmatch.login.presentation.listener.SpotifyLoginFragmentListener
 import com.example.songmatch.login.presentation.model.SpotifyLoginViewAction
-import com.example.songmatch.main.domain.TrackRepository
+import com.example.songmatch.core.domain.TrackRepository
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
