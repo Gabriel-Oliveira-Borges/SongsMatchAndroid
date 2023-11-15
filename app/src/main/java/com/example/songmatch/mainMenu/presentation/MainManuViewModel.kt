@@ -3,6 +3,7 @@ package com.example.songmatch.mainMenu.presentation
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
+import com.example.songmatch.core.useCase.CreateRoomUseCase
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import com.example.songmatch.core.useCase.UploadUserTracksUseCase
 import com.example.songmatch.login.useCase.LogoutCurrentUserUseCase
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel()
 class MainManuViewModel @Inject constructor(
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
-    private val uploadUserTracksUseCase: UploadUserTracksUseCase
+    private val uploadUserTracksUseCase: UploadUserTracksUseCase,
+    private val createRoomUseCase: CreateRoomUseCase
 ): BaseViewModel<MainMenuViewAction, MainMenuViewState>() {
     override val viewState = MainMenuViewState()
 
@@ -26,7 +28,16 @@ class MainManuViewModel @Inject constructor(
     }
 
     fun onCreateRoom() {
-        Log.d("RoomSelection","on Create Room")
+        viewModelScope.launch {
+            createRoomUseCase().handleResult(
+                onSuccess = {
+                    viewState.action.postValue(MainMenuViewState.Action.NavigateToRoom)
+                },
+                onError = {
+//                    TODO: let user know it
+                }
+            )
+        }
     }
 
     fun onJoinRoom() {

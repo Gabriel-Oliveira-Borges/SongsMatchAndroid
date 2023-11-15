@@ -8,5 +8,6 @@ class MainMenuViewState {
 
     sealed class Action {
         object NavigateToJoinRoom : Action()
+        object NavigateToRoom : Action()
     }
 }

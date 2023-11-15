@@ -1,5 +1,7 @@
 package com.example.songmatch.core.di
 
+import com.example.songmatch.core.domain.RoomRepository
+import com.example.songmatch.core.domain.RoomRepositoryImp
 import com.example.songmatch.core.domain.SessionRepository
 import com.example.songmatch.core.domain.SessionRepositoryImp
 import com.example.songmatch.core.domain.TrackRepository
@@ -21,4 +23,8 @@ abstract class DomainModule {
     @Binds
     @Singleton
     abstract fun bindsSongsRepository(imp: TrackRepositoryImp): TrackRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsRoomRepository(imp: RoomRepositoryImp): RoomRepository
 }

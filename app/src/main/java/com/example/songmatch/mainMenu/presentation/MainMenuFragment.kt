@@ -39,6 +39,9 @@ class MainMenuFragment: BaseFragment() {
                 is MainMenuViewState.Action.NavigateToJoinRoom -> {
                     navController.navigate(MainMenuFragmentDirections.actionRoomSelectionFragmentToJoinRoomFragment())
                 }
+                is MainMenuViewState.Action.NavigateToRoom -> {
+                    navController.navigate(MainMenuFragmentDirections.actionRoomSelectionFragmentToRoomFragment())
+                }
             }
         }
     }

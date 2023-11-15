@@ -25,13 +25,14 @@ class TrackRepositoryImp @Inject constructor(
 
     override suspend fun getUserTracks(): ResultOf<List<Track>, ResponseError> {
         val user = getCurrentUserUseCase().handleResult()
-        val savedTracks = spotifyDataSource.getUserSavedTracks()
-            .onError { return ResultOf.Error(ResponseError.NetworkError()) }
-            .handleResult()
+        //TODO: Undo this later.
+//        val savedTracks = spotifyDataSource.getUserSavedTracks()
+//            .onError { return ResultOf.Error(ResponseError.NetworkError()) }
+//            .handleResult()
         val topTracks: List<TrackResponse>? = spotifyDataSource.getUserTopTracks()
             .onError { return ResultOf.Error(ResponseError.NetworkError()) }
             .handleResult()
-        val allTracks = savedTracks!! + topTracks!!
+        val allTracks = /*savedTracks!! +*/ topTracks!!
         return ResultOf.Success(
             trackResponseToTrackMapper.map(
                 from = allTracks,

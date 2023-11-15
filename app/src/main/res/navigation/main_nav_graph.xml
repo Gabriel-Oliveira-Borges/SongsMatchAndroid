@@ -13,11 +13,27 @@
             android:id="@+id/action_roomSelectionFragment_to_joinRoomFragment"
             app:destination="@id/joinRoomFragment"
             app:popUpTo="@id/roomSelectionFragment"
-            app:popUpToInclusive="false" />
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_roomSelectionFragment_to_roomFragment"
+            app:destination="@id/roomFragment"
+            app:popUpTo="@id/roomSelectionFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         tools:layout="@layout/join_room_fragment"
         android:id="@+id/joinRoomFragment"
         android:name="com.example.songmatch.mainMenu.presentation.JoinRoomFragment"
-        android:label="JoinRoomFragment" />
+        android:label="JoinRoomFragment" >
+        <action
+            android:id="@+id/action_joinRoomFragment_to_roomFragment"
+            app:destination="@id/roomFragment"
+            app:popUpTo="@id/roomSelectionFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        tools:layout="@layout/room_fragment"
+        android:id="@+id/roomFragment"
+        android:name="com.example.songmatch.mainMenu.presentation.RoomFragment"
+        android:label="RoomFragment" />
 </navigation>
