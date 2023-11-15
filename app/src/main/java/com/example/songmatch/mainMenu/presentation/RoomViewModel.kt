@@ -26,7 +26,7 @@ class RoomViewModel @Inject constructor(
 
     private fun listenToCurrentRoom() {
         viewModelScope.launch {
-            listenToCurrentRoomUseCase().collect {
+            listenToCurrentRoomUseCase()?.collect {
                 Log.d("RoomViewModel", it.handleResult().toString())
             }
         }

@@ -28,7 +28,7 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        // TODO: Essa fragment está como inicial no nav graph. Fazer como eu fiz no BillsManager, criando um fragment inicial, que irá escolher qual fluxo de navegação o app deve seguir com base no accessToken salvo (Ver por quanto tempo ele é válido)
+
         return SpotifyLoginFragmentBinding.inflate(inflater).apply {
             binding = this
             viewModel = this@SpotifyLoginFragment.viewModel

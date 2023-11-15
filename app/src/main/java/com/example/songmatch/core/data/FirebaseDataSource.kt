@@ -1,8 +1,6 @@
 package com.example.songmatch.core.data
 
-import android.provider.ContactsContract.CommonDataKinds.StructuredName
 import android.util.Log
-import com.example.songmatch.core.api.TrackResponse
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
 import com.example.songmatch.core.domain.model.User
@@ -13,11 +11,13 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 object FirebaseCollections {
@@ -29,15 +29,9 @@ object FirebaseCollections {
 interface FirebaseDataSource {
     //Todo: Replace all these UserEntity, User and Track parameters for Firebase's ones
     suspend fun addUser(userEntity: UserEntity): ResultOf<Unit, Unit>
-
     suspend fun removeUser(user: User): ResultOf<Unit, Unit>
-
     suspend fun addUserTracks(tracks: List<Track>): ResultOf<Unit, Unit>
-
     suspend fun createRoom(user: User): ResultOf<Int, Unit>
-
-    suspend fun getUserCurrentRoom(user: User): ResultOf<Int?, Unit>
-
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseRoom, Unit>>
 
     data class FirebaseRoom(
@@ -51,7 +45,8 @@ interface FirebaseDataSource {
         val imageUri: String?,
         val name: String,
         val tracksUploaded: Boolean,
-        val userToken: String
+        val userToken: String,
+        val userRoom: String?
     )
 
     data class FirebaseTrack(
@@ -95,8 +90,8 @@ class FirebaseDataSourceImp @Inject constructor(
             name = user.name!!,
             imageUri = user.spotifyUser.imageUri,
             tracksUploaded = false,
-            userToken = user.spotifyUser.token
-
+            userToken = user.spotifyUser.token,
+            userRoom = null
         )
 
         return this.addDocument(
@@ -132,11 +127,12 @@ class FirebaseDataSourceImp @Inject constructor(
                 playlistCreated = false,
                 playlistLink = null
             )
-        ).mapSuccess { roomCode }
-    }
-
-    override suspend fun getUserCurrentRoom(user: User): ResultOf<Int?, Unit> {
-        TODO("Not yet implemented")
+        ).mapSuccess { roomCode }.onSuccess {
+            firestore
+                .collection(FirebaseCollections.USER_COLLECTION)
+                .document(user.spotifyUser.token)
+                .set(hashMapOf("userRoom" to roomCode), SetOptions.merge())
+        }
     }
 
     override suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseDataSource.FirebaseRoom, Unit>> {

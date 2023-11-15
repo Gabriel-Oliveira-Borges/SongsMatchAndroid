@@ -43,19 +43,10 @@ class TrackRepositoryImp @Inject constructor(
 
     override suspend fun uploadUserTracks(): ResultOf<Unit, Unit> {
         //TODO: Add retries here!
-        if (shouldUploadUserTracks().handleResult() == true) {
-            val userTracks = this.getUserTracks().handleResult()
-            userTracks?.let {
-                return firebaseDataSource.addUserTracks(it)
-            }
-            return ResultOf.Error(Unit)
-        } else {
-            return ResultOf.Success(Unit)
+        val userTracks = this.getUserTracks().handleResult()
+        userTracks?.let {
+            return firebaseDataSource.addUserTracks(it)
         }
-    }
-
-    private suspend fun shouldUploadUserTracks(): ResultOf<Boolean, Unit> {
-        //TODO: Do this logic! This should only be true if user.isTokenExpired() && user.tracksUploaded == false (Add this field in local database too so I don't need to hit firebase everytime)
-        return ResultOf.Success(false)
+        return ResultOf.Error(Unit)
     }
 }

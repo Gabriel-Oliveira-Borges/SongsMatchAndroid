@@ -14,6 +14,7 @@ class GetCurrentUserUseCaseImp @Inject constructor(
     private val sessionRepository: SessionRepository
 ) : GetCurrentUserUseCase {
     override suspend operator fun invoke(): ResultOf<User?, Unit> {
+        //TODO: Replace remove nullable user
         return sessionRepository.getCurrentUser()
     }
 }

@@ -17,6 +17,8 @@ interface SessionLocalDataSource {
     suspend fun saveUser(userEntity: UserEntity): ResultOf<Unit, Unit>
     suspend fun updateUserName(name: String): ResultOf<Unit, Unit>
     suspend fun updateToken(token: String, expiresIn: Date): ResultOf<Unit, Unit>
+    suspend fun updateUserRoom(room: String?): ResultOf<Unit, Unit>
+    suspend fun updateTracksUploaded(uploaded: Boolean): ResultOf<Unit, Unit>
     suspend fun removeUser(): ResultOf<Unit, Unit>
 }
 
@@ -52,7 +54,9 @@ class SessionLocalDataSourceImp @Inject constructor(
             uri = null,
             name = name,
             lastTrackUpdate = null,
-            remoteToken = null
+            remoteToken = null,
+            tracksUploaded = false,
+            currentRoom = null
         )
         userDao.insertUser(user)
         return ResultOf.Success(Unit)
@@ -79,6 +83,28 @@ class SessionLocalDataSourceImp @Inject constructor(
                     newToken = token,
                     tokenExpiration = expiresIn
                 )
+            )
+        } ?: ResultOf.Error(Unit)
+    }
+
+    override suspend fun updateTracksUploaded(uploaded: Boolean): ResultOf<Unit, Unit> {
+        val user = userDao.getCurrentUser()?.copy(
+            tracksUploaded = uploaded
+        )
+        return user?.let {
+            ResultOf.Success(
+                userDao.updateUser(it)
+            )
+        } ?: ResultOf.Error(Unit)
+    }
+
+    override suspend fun updateUserRoom(room: String?): ResultOf<Unit, Unit> {
+        val user = userDao.getCurrentUser()?.copy(
+            currentRoom = room
+        )
+        return user?.let {
+            ResultOf.Success(
+                userDao.updateUser(it)
             )
         } ?: ResultOf.Error(Unit)
     }

@@ -14,4 +14,6 @@ data class UserEntity(
     val uri: String?,
     val name: String?,
     val lastTrackUpdate: Date?,
+    val tracksUploaded: Boolean,
+    val currentRoom: String?
 )

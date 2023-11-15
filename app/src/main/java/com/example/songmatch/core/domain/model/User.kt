@@ -6,7 +6,9 @@ import java.util.concurrent.TimeUnit
 data class User(
     val name: String?,
     val spotifyUser: SpotifyUser,
-    val lastTrackUpdate: Date?
+    val lastTrackUpdate: Date?,
+    val tracksUploaded: Boolean,
+    val currentRoom: String?
 ) {
     val shouldUpdateTracks: Boolean get() {
         if (this.lastTrackUpdate == null)

@@ -3,6 +3,7 @@ package com.example.songmatch.core.presentation
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavInflater
 import com.example.songmatch.core.domain.model.isTokenExpired
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import com.example.songmatch.login.useCase.LogoutCurrentUserUseCase
@@ -32,11 +33,14 @@ class InitViewModel @Inject constructor(
 
             if (currentUser == null) {
                 navigation.postValue(Navigation.OpenAuthenticationFlow)
-            } else if (currentUser.isTokenExpired()) { // TODO: This should only happen if user's tracks are not in firebase. Refactor it when done putting it in local database
+            } else if (currentUser.isTokenExpired() && !currentUser.tracksUploaded) {
                 logoutCurrentUserUseCase()
                 navigation.postValue(Navigation.OpenAuthenticationFlow)
+            } else if (currentUser.currentRoom != null) {
+
+//                TODO: Navigate to room fragment directly!
+                navigation.postValue(Navigation.OpenRoomSelectionFlow)
             } else {
-                //TODO: Get user current room and pass it to MainMenu frament. If it's not null, navigate to room fragment
                 navigation.postValue(Navigation.OpenRoomSelectionFlow)
             }
         }
