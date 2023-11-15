@@ -32,10 +32,11 @@ class InitViewModel @Inject constructor(
 
             if (currentUser == null) {
                 navigation.postValue(Navigation.OpenAuthenticationFlow)
-            } else if (currentUser.isTokenExpired()) {
+            } else if (currentUser.isTokenExpired()) { // TODO: This should only happen if user's tracks are not in firebase. Refactor it when done putting it in local database
                 logoutCurrentUserUseCase()
                 navigation.postValue(Navigation.OpenAuthenticationFlow)
             } else {
+                //TODO: Get user current room and pass it to MainMenu frament. If it's not null, navigate to room fragment
                 navigation.postValue(Navigation.OpenRoomSelectionFlow)
             }
         }

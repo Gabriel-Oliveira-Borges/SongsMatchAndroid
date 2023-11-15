@@ -13,9 +13,12 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
-import javax.sql.StatementEvent
 
 object FirebaseCollections {
     val USER_COLLECTION = "users"
@@ -24,6 +27,7 @@ object FirebaseCollections {
 }
 
 interface FirebaseDataSource {
+    //Todo: Replace all these UserEntity, User and Track parameters for Firebase's ones
     suspend fun addUser(userEntity: UserEntity): ResultOf<Unit, Unit>
 
     suspend fun removeUser(user: User): ResultOf<Unit, Unit>
@@ -31,6 +35,10 @@ interface FirebaseDataSource {
     suspend fun addUserTracks(tracks: List<Track>): ResultOf<Unit, Unit>
 
     suspend fun createRoom(user: User): ResultOf<Int, Unit>
+
+    suspend fun getUserCurrentRoom(user: User): ResultOf<Int?, Unit>
+
+    suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseRoom, Unit>>
 
     data class FirebaseRoom(
         val usersToken: List<String>,
@@ -72,10 +80,13 @@ interface FirebaseDataSource {
 
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FirebaseDataSourceImp @Inject constructor(
     private val userEntityToUserMapper: UserEntityToUserMapper,
 ) : FirebaseDataSource {
     private val firestore = Firebase.firestore
+
+    //TODO: Change dispatchers of all Datasources
 
     override suspend fun addUser(userEntity: UserEntity): ResultOf<Unit, Unit> {
         val user = userEntityToUserMapper.map(userEntity)
@@ -122,6 +133,35 @@ class FirebaseDataSourceImp @Inject constructor(
                 playlistLink = null
             )
         ).mapSuccess { roomCode }
+    }
+
+    override suspend fun getUserCurrentRoom(user: User): ResultOf<Int?, Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseDataSource.FirebaseRoom, Unit>> {
+        return callbackFlow {
+            val subscription = firestore
+                .collection(FirebaseCollections.ROOM_COLLECTION)
+                .document(roomCode)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null || snapshot == null || !snapshot.exists()) {
+                        offer(ResultOf.Error(Unit))
+                    } else {
+                        val data = snapshot.data!!
+
+                        val room = FirebaseDataSource.FirebaseRoom(
+                            usersToken = data["usersToken"] as List<String>,
+                            roomCode = (data["roomCode"] as Long).toInt(),
+                            playlistCreated = data["playlistCreated"] as Boolean,
+                            playlistLink = data["playlistLink"] as String?
+                        )
+                        offer(ResultOf.Success(room))
+                    }
+                }
+
+            awaitClose { subscription.remove() }
+        }
     }
 
     override suspend fun removeUser(user: User): ResultOf<Unit, Unit> {

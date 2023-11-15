@@ -9,10 +9,13 @@ interface CreateRoomUseCase {
 }
 
 class CreateRoomUseCaseImp @Inject constructor(
-    private val roomRepository: RoomRepository
+    private val roomRepository: RoomRepository,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase
 ): CreateRoomUseCase {
     override suspend fun invoke(): ResultOf<Int, Unit> {
-        return roomRepository.createRoom()
+        return getCurrentUserUseCase().handleResult()?.let {
+            roomRepository.createRoom(it)
+        } ?: ResultOf.Error(Unit)
     }
 }
 
