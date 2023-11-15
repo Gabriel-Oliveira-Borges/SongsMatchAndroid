@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
+import com.example.songmatch.core.useCase.UploadUserTracksUseCase
+import com.example.songmatch.login.useCase.LogoutCurrentUserUseCase
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewAction
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,13 +14,14 @@ import javax.inject.Inject
 
 @HiltViewModel()
 class MainManuViewModel @Inject constructor(
-    private val getCurrentUserUseCase: GetCurrentUserUseCase
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val uploadUserTracksUseCase: UploadUserTracksUseCase
 ): BaseViewModel<MainMenuViewAction, MainMenuViewState>() {
     override val viewState = MainMenuViewState()
 
     override fun dispatchViewAction(action: MainMenuViewAction) {
         when (action) {
-            is MainMenuViewAction.Init -> getCurrentUser()
+            is MainMenuViewAction.Init -> onInit()
         }
     }
 
@@ -28,6 +31,17 @@ class MainManuViewModel @Inject constructor(
 
     fun onJoinRoom() {
         viewState.action.postValue(MainMenuViewState.Action.NavigateToJoinRoom)
+    }
+
+    private fun onInit() {
+        getCurrentUser()
+        uploadTracks()
+    }
+
+    private fun uploadTracks() {
+        viewModelScope.launch {
+            uploadUserTracksUseCase()
+        }
     }
 
     private fun getCurrentUser() {

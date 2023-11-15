@@ -4,5 +4,4 @@ import android.app.Activity
 
 sealed class SpotifyLoginViewAction {
     object RequestLogin : SpotifyLoginViewAction()
-    object GetUserTracks: SpotifyLoginViewAction()
 }

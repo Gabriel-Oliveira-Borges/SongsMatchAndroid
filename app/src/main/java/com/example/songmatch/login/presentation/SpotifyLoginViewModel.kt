@@ -15,7 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SpotifyLoginViewModel @Inject constructor(
     private val loginToSpotifyUseCase: LoginToSpotifyUseCase,
-    private val trackRepository: TrackRepository
 ) : BaseViewModel<SpotifyLoginViewAction, SpotifyLoginViewState>() {
     override val viewState = SpotifyLoginViewState()
     var tracks = mutableListOf<TrackResponse>()
@@ -23,19 +22,10 @@ class SpotifyLoginViewModel @Inject constructor(
     override fun dispatchViewAction(action: SpotifyLoginViewAction) {
         when (action) {
             is RequestLogin -> requestLogin()
-            is SpotifyLoginViewAction.GetUserTracks -> getUserTracks()
         }
     }
 
     private fun requestLogin() {
         loginToSpotifyUseCase()
-    }
-
-    private fun getUserTracks() {
-        viewModelScope.launch {
-            tracks = trackRepository.updateTracks().handleResult()?.toMutableList() ?: mutableListOf()
-            print("Tracks atualizadas")
-            print(tracks)
-        }
     }
 }

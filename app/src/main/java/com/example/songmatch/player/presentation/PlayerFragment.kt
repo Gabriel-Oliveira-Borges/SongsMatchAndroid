@@ -48,11 +48,6 @@ class PlayerFragment: Fragment(), SpotifyLoginFragmentListener {
         }.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.dispatchViewAction(SpotifyLoginViewAction.GetUserTracks)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         SpotifyAppRemote.disconnect(mSpotifyAppRemote)

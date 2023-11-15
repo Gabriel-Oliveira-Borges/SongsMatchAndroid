@@ -4,22 +4,21 @@ import com.example.songmatch.core.api.TimeRange
 
 
 data class Track(
-    val artist: TrackArtist?,
-    val uuid: Int,
-    val uri: String,
-    val timeRange: TimeRange?,
-    val duration: String,
-    val spotifyId: String,
+    val id: String,
     val name: String,
-    val type: String,
     val popularity: Int,
-    val isTopTrack: Boolean,
-    val isSavedTrack: Boolean
+    val timeRange: String?,
+    val type: String,
+    val uri: String,
+    val userToken: String,
+    val artists: List<TrackArtist>,
 )
 
 
 
 data class TrackArtist(
+    val id: String,
     val name: String,
     val uri: String,
+    val type: String
 )

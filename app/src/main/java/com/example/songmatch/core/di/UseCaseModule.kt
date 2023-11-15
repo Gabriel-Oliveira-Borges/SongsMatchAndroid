@@ -16,4 +16,6 @@ abstract class UseCaseModule {
     @Binds abstract fun bindGetUserSpotifyTokeUseCase(impl: GetCurrentUserUseCaseImp): GetCurrentUserUseCase
 
     @Binds abstract fun bindSaveUserSpotifyTokenUseCase(impl: SaveSpotifyUserUseCaseImp): SaveSpotifyUserUseCase
+
+    @Binds abstract fun bindUploadUserTracksUseCase(impl: UploadUserTracksUseCaseImp): UploadUserTracksUseCase
 }
