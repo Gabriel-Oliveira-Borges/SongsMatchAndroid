@@ -138,8 +138,8 @@ class FirebaseDataSourceImp @Inject constructor(
     }
 
     override suspend fun getRoom(roomCode: String): ResultOf<FirebaseDataSource.FirebaseRoom?, Unit> {
-        return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {
-            val data = it.data
+        return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {data ->
+            Log.d("FirebaseDataSource", data.toString())
             FirebaseDataSource.FirebaseRoom(
                 usersToken = data?.get("usersToken") as List<String>,
                 roomCode = (data["roomCode"] as Long).toInt(),
@@ -274,14 +274,14 @@ class FirebaseDataSourceImp @Inject constructor(
         return result
     }
 
-    private suspend inline fun getDocument(collection: String, document: String): ResultOf<DocumentSnapshot, Unit> {
-        lateinit var result: ResultOf<DocumentSnapshot, Unit>
+    private suspend inline fun getDocument(collection: String, document: String): ResultOf<Map<String, Any>?, Unit> {
+        lateinit var result: ResultOf<Map<String, Any>?, Unit>
         firestore
             .collection(collection)
             .document(document)
             .get()
             .addOnSuccessListener {
-                result = ResultOf.Success(it)
+                result = ResultOf.Success(it.data)
             }
             .addOnFailureListener {
                 Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")

@@ -1,5 +1,6 @@
 package com.example.songmatch.core.domain
 
+import android.util.Log
 import com.example.songmatch.core.data.FirebaseDataSource
 import com.example.songmatch.core.domain.model.Room
 import com.example.songmatch.core.domain.model.User
@@ -36,9 +37,7 @@ class RoomRepositoryImp @Inject constructor(
     }
 
     override suspend fun isRoomCodeValid(roomCode: String, userToken: String): Boolean {
-        val room = firebaseDataSource.getRoom(roomCode).handleResult() ?: return false
-
-        return !room.usersToken.contains(userToken)
+        return firebaseDataSource.getRoom(roomCode).handleResult() != null
     }
 
     override suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {

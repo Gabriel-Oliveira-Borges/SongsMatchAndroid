@@ -16,7 +16,9 @@ class JoinRoomUseCaseImp @Inject constructor(
     override suspend fun invoke(roomCode: String): ResultOf<Unit, String> {
         val user = sessionRepository.getCurrentUser().handleResult() ?: return ResultOf.Error("Usuário não encontrado")
 
-        return if (roomRepository.isRoomCodeValid(roomCode, user.spotifyUser.token)) {
+        return if (user.currentRoom != null) {
+            ResultOf.Success(Unit)
+        } else if (roomRepository.isRoomCodeValid(roomCode, user.spotifyUser.token)) {
             roomRepository.joinRoom(roomCode, userToken = user.spotifyUser.token).mapError {
                 "Erro ao entrar na sala"
             }

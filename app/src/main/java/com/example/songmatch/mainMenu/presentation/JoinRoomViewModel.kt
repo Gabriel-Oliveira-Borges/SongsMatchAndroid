@@ -1,5 +1,6 @@
 package com.example.songmatch.mainMenu.presentation
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.JoinRoomUseCase
@@ -22,8 +23,11 @@ class JoinRoomViewModel @Inject constructor(
     fun onJoinRoomPressed() {
         viewModelScope.launch {
             if (viewState.roomCode.value?.length == 5) {
-                joinRoomUseCase(roomCode = viewState.roomCode.value!!)
-                viewState.action.postValue(JoinRoomViewState.Action.NavigateToRoomFragment)
+                joinRoomUseCase(roomCode = viewState.roomCode.value!!).onSuccess {
+                    viewState.action.postValue(JoinRoomViewState.Action.NavigateToRoomFragment)
+                }.onError {
+                    Log.d("Joinroom error", it)
+                }
             } else {
 //            TODO: Let user know it
             }
