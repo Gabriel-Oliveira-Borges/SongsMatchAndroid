@@ -1,5 +1,6 @@
 package com.example.songmatch.core.helpers
 
+import android.util.Log
 import com.example.songmatch.core.framework.retrofit.INVALID_SPOTIFY_TOKEN_MESSAGE
 import com.example.songmatch.core.models.ResponseError
 import com.example.songmatch.core.models.ResultOf
@@ -60,7 +61,7 @@ private fun mapHttpExceptionToResultError(
     val errorBodyResponse = if (shouldDeserialize(errorBodyString, statusCode)) {
         deserializeErrorBodyResponse(errorBodyString)
     } else null
-
+    Log.e("API_CALL_ERROR", errorBodyString ?: message)
     if (errorBodyString == INVALID_SPOTIFY_TOKEN_MESSAGE) {
         ResultOf.Error(
             ResponseError.UnauthorizedError()

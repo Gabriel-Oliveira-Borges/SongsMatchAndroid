@@ -14,10 +14,11 @@ import javax.inject.Inject
 interface RoomRepository {
     suspend fun createRoom(user: User): ResultOf<Int, Unit>
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<Room, Unit>>
+    suspend fun isRoomCodeValid(roomCode: String, userToken: String): Boolean
+    suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
 }
 
 class RoomRepositoryImp @Inject constructor(
-    private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val firebaseRoomToRoomMapper: FirebaseRoomToRoomMapper,
     private val firebaseDataSource: FirebaseDataSource
 ): RoomRepository {
@@ -34,4 +35,13 @@ class RoomRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun isRoomCodeValid(roomCode: String, userToken: String): Boolean {
+        val room = firebaseDataSource.getRoom(roomCode).handleResult() ?: return false
+
+        return !room.usersToken.contains(userToken)
+    }
+
+    override suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {
+        return firebaseDataSource.joinRoom(roomCode, userToken)
+    }
 }

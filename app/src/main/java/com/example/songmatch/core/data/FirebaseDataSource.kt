@@ -1,12 +1,15 @@
 package com.example.songmatch.core.data
 
 import android.util.Log
+import com.example.songmatch.core.domain.model.SpotifyUser
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
 import com.example.songmatch.core.domain.model.User
 import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.mappers.UserEntityToUserMapper
 import com.example.songmatch.core.models.ResultOf
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
@@ -33,6 +36,8 @@ interface FirebaseDataSource {
     suspend fun addUserTracks(tracks: List<Track>): ResultOf<Unit, Unit>
     suspend fun createRoom(user: User): ResultOf<Int, Unit>
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseRoom, Unit>>
+    suspend fun getRoom(roomCode: String): ResultOf<FirebaseRoom?, Unit>
+    suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
 
     data class FirebaseRoom(
         val usersToken: List<String>,
@@ -128,11 +133,40 @@ class FirebaseDataSourceImp @Inject constructor(
                 playlistLink = null
             )
         ).mapSuccess { roomCode }.onSuccess {
-            firestore
-                .collection(FirebaseCollections.USER_COLLECTION)
-                .document(user.spotifyUser.token)
-                .set(hashMapOf("userRoom" to roomCode), SetOptions.merge())
+            this.addUserRoomToUser(roomCode = roomCode.toString(), userToken = user.spotifyUser.token)
         }
+    }
+
+    override suspend fun getRoom(roomCode: String): ResultOf<FirebaseDataSource.FirebaseRoom?, Unit> {
+        return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {
+            val data = it.data
+            FirebaseDataSource.FirebaseRoom(
+                usersToken = data?.get("usersToken") as List<String>,
+                roomCode = (data["roomCode"] as Long).toInt(),
+                playlistCreated = data["playlistCreated"] as Boolean,
+                playlistLink = data["playlistLink"] as String?
+            )
+
+        }
+    }
+
+    override suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {
+        lateinit var result: ResultOf<Unit, Unit>
+        firestore
+            .collection(FirebaseCollections.ROOM_COLLECTION)
+            .document(roomCode)
+            .update("usersToken", FieldValue.arrayUnion(userToken))
+            .addOnSuccessListener {
+                result = ResultOf.Success(Unit)
+                this.addUserRoomToUser(roomCode = roomCode, userToken = userToken)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+
+        return result
     }
 
     override suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseDataSource.FirebaseRoom, Unit>> {
@@ -199,6 +233,13 @@ class FirebaseDataSourceImp @Inject constructor(
         return result
     }
 
+    private fun addUserRoomToUser(userToken: String, roomCode: String) {
+        firestore
+            .collection(FirebaseCollections.USER_COLLECTION)
+            .document(userToken)
+            .set(hashMapOf("userRoom" to roomCode), SetOptions.merge())
+    }
+
     private suspend inline fun removeDocument(collection: String, document: String): ResultOf<Unit, Unit> {
         lateinit var result: ResultOf<Unit, Unit>
         firestore.collection( collection)
@@ -233,14 +274,14 @@ class FirebaseDataSourceImp @Inject constructor(
         return result
     }
 
-    private suspend inline fun getDocument(collection: String, document: String): ResultOf<Map<String, Any>?, Unit> {
-        lateinit var result: ResultOf<Map<String, Any>?, Unit>
+    private suspend inline fun getDocument(collection: String, document: String): ResultOf<DocumentSnapshot, Unit> {
+        lateinit var result: ResultOf<DocumentSnapshot, Unit>
         firestore
             .collection(collection)
             .document(document)
             .get()
             .addOnSuccessListener {
-                result = ResultOf.Success(it.data)
+                result = ResultOf.Success(it)
             }
             .addOnFailureListener {
                 Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")

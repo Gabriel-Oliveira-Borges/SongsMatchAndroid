@@ -1,5 +1,6 @@
 package com.example.songmatch.core.data
 
+import android.util.Log
 import com.example.songmatch.core.api.*
 import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.helpers.getAllPaginatedItems
@@ -76,6 +77,8 @@ class SpotifyDataSourceImpl @Inject constructor(
                 track.isTopTrack = true
                 track
             }
+        }.onError {
+            Log.e("SPOTIFY-API-ERROR", it.message ?: it.toString())
         }
     }
 }

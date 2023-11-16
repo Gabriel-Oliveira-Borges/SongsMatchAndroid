@@ -2,12 +2,16 @@ package com.example.songmatch
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
+import com.example.songmatch.login.presentation.CLIENT_ID
+import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
 import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
+import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,6 +29,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+        val connectionParams = ConnectionParams.Builder(CLIENT_ID)
+            .setRedirectUri(REDIRECT_URI)
+            .showAuthView(true)
+            .build()
         if (savedInstanceState == null) {
             appApplication = this.applicationContext as AppApplication
         }
@@ -51,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             SPOTIFY_LOGIN_REQUEST_CODE -> {
                 val response =
                     AuthenticationClient.getResponse(resultCode, data)
+                Log.d("Spotify response", response.toString())
                 when (response.type) {
                     AuthenticationResponse.Type.TOKEN -> {
                         lifecycleScope.launch {

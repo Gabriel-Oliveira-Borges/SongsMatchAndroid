@@ -18,5 +18,7 @@ abstract class UseCaseModule {
     @Binds
     abstract fun bindCreateRoomUseCaseImp(impl: CreateRoomUseCaseImp): CreateRoomUseCase
     @Binds
+    abstract fun bindJoinRoomUseCaseImp(impl: JoinRoomUseCaseImp): JoinRoomUseCase
+    @Binds
     abstract fun bindGetUserCurrentRoomImp(impl: ListenToCurrentRoomUseCaseImp): ListenToCurrentRoomUseCase
 }
