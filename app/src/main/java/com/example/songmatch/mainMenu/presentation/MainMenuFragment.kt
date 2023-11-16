@@ -34,7 +34,7 @@ class MainMenuFragment: BaseFragment() {
 
     //TODO: Qual é o melhor lugar para se observar as ações?
     private fun observeActions() {
-        viewModel.viewState.action.observe(viewLifecycleOwner) {
+        viewModel.viewState.navigationAction.observe(viewLifecycleOwner) {
             when(it) {
                 is MainMenuViewState.Action.NavigateToJoinRoom -> {
                     navController.navigate(MainMenuFragmentDirections.actionRoomSelectionFragmentToJoinRoomFragment())

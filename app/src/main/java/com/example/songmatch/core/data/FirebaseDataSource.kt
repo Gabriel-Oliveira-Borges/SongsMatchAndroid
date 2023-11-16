@@ -232,4 +232,21 @@ class FirebaseDataSourceImp @Inject constructor(
             .await()
         return result
     }
+
+    private suspend inline fun getDocument(collection: String, document: String): ResultOf<Map<String, Any>?, Unit> {
+        lateinit var result: ResultOf<Map<String, Any>?, Unit>
+        firestore
+            .collection(collection)
+            .document(document)
+            .get()
+            .addOnSuccessListener {
+                result = ResultOf.Success(it.data)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+        return result
+    }
 }

@@ -1,14 +1,13 @@
 package com.example.songmatch.mainMenu.presentation
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.CreateRoomUseCase
 import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import com.example.songmatch.core.useCase.UploadUserTracksUseCase
-import com.example.songmatch.login.useCase.LogoutCurrentUserUseCase
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewAction
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState
+import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,7 +30,7 @@ class MainManuViewModel @Inject constructor(
         viewModelScope.launch {
             createRoomUseCase().handleResult(
                 onSuccess = {
-                    viewState.action.postValue(MainMenuViewState.Action.NavigateToRoom)
+                    viewState.navigationAction.postValue(MainMenuViewState.Action.NavigateToRoom)
                 },
                 onError = {
 //                    TODO: let user know it
@@ -41,7 +40,7 @@ class MainManuViewModel @Inject constructor(
     }
 
     fun onJoinRoom() {
-        viewState.action.postValue(MainMenuViewState.Action.NavigateToJoinRoom)
+        viewState.navigationAction.postValue(MainMenuViewState.Action.NavigateToJoinRoom)
     }
 
     private fun onInit() {
@@ -51,7 +50,14 @@ class MainManuViewModel @Inject constructor(
 
     private fun uploadTracks() {
         viewModelScope.launch {
+            viewState.state.postValue(State.UploadingTracks)
             uploadUserTracksUseCase()
+                .onSuccess {
+                    viewState.state.postValue(State.Ready)
+                }
+                .onError {
+                    uploadTracks()
+                }
         }
     }
 
