@@ -7,7 +7,6 @@ import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import com.example.songmatch.core.useCase.UploadUserTracksUseCase
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewAction
 import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState
-import com.example.songmatch.mainMenu.presentation.model.MainMenuViewState.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,12 +27,15 @@ class MainManuViewModel @Inject constructor(
 
     fun onCreateRoom() {
         viewModelScope.launch {
+            viewState.isLoading.postValue(true)
             createRoomUseCase().handleResult(
                 onSuccess = {
                     viewState.navigationAction.postValue(MainMenuViewState.Action.NavigateToRoom)
                 },
                 onError = {
 //                    TODO: let user know it
+                }, onFinish = {
+                    viewState.isLoading.postValue(false)
                 }
             )
         }
@@ -50,10 +52,10 @@ class MainManuViewModel @Inject constructor(
 
     private fun uploadTracks() {
         viewModelScope.launch {
-            viewState.state.postValue(State.UploadingTracks)
+            viewState.isLoading.postValue(true)
             uploadUserTracksUseCase()
                 .onSuccess {
-                    viewState.state.postValue(State.Ready)
+                    viewState.isLoading.postValue(false)
                 }
                 .onError {
                     uploadTracks()
@@ -63,8 +65,9 @@ class MainManuViewModel @Inject constructor(
 
     private fun getCurrentUser() {
         viewModelScope.launch {
+            viewState.isLoading.postValue(true)
             val user = getCurrentUserUseCase().handleResult()
-
+            viewState.isLoading.postValue(false)
             if (user != null) {
                 viewState.greetings.postValue("Olá, ${user.name}")
                 if (!user.currentRoom.isNullOrEmpty()) {

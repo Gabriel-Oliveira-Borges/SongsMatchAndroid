@@ -79,8 +79,7 @@ class PlayerFragment: BaseFragment() {
             Picasso
                 .get()
                 .load(it.albumImageUri)
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
+                .error(android.R.drawable.ic_menu_report_image)
                 .into(binding.imageView)
         }
     }
@@ -89,6 +88,7 @@ class PlayerFragment: BaseFragment() {
         viewModel.viewState.action.observe(viewLifecycleOwner) {
             when (it) {
                 is PlayerViewState.Action.OpenSpotifyApp -> sendSpotifyIntent(it.uri)
+                is PlayerViewState.Action.GoToMainMenuFragment -> navController.popBackStack(R.id.roomSelectionFragment, true)
             }
         }
     }
@@ -101,7 +101,6 @@ class PlayerFragment: BaseFragment() {
         } catch (e: PackageManager.NameNotFoundException) {
             false
         }
-
         if (isSpotifyInstalled) {
             val branchLink =
                 "https://spotify.link/content_linking?~campaign=" + context?.packageName + "&\$deeplink_path=" + uri + "&\$fallback_url=" + uri

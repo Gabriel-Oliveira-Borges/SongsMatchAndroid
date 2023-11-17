@@ -20,5 +20,7 @@ class AppApplication : Application() {
 }
 
 enum class RequestInterruptedBySpotifyLogin {
-    UPDATING_TRACKS
+    UPDATING_TRACKS,
+    CREATING_PLAYLIST,
+    UPLOADING_TRACKS_TO_PLAYLIST
 }

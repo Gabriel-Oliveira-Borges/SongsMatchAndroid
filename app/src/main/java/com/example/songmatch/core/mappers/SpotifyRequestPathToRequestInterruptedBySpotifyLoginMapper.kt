@@ -8,10 +8,14 @@ class SpotifyRequestPathToRequestInterruptedBySpotifyLoginMapper @Inject constru
 
 ): BaseMapper<String, RequestInterruptedBySpotifyLogin?> {
     override fun map(from: String): RequestInterruptedBySpotifyLogin? {
-        return when (from) {
-            SpotifyRequestPath.getSavedTracks -> RequestInterruptedBySpotifyLogin.UPDATING_TRACKS
-            SpotifyRequestPath.getTopTracks -> RequestInterruptedBySpotifyLogin.UPDATING_TRACKS
-            else -> null
+        return if (from == SpotifyRequestPath.getSavedTracks || from == SpotifyRequestPath.getTopTracks) {
+            RequestInterruptedBySpotifyLogin.UPDATING_TRACKS
+        } else if (from.startsWith("https://api.spotify.com/v1/users/")) {
+            RequestInterruptedBySpotifyLogin.CREATING_PLAYLIST
+        } else if (from.startsWith("https://api.spotify.com/v1/playlists/")) {
+            RequestInterruptedBySpotifyLogin.UPLOADING_TRACKS_TO_PLAYLIST
+        } else {
+            null
         }
     }
 }

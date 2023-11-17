@@ -22,10 +22,12 @@ class PlayerViewState {
         }
     var isPlaying = MutableLiveData<Boolean>()
     var action = MutableLiveData<Action>()
+    var isLoading = MutableLiveData<Boolean>()
 
     sealed class Action {
         data class OpenSpotifyApp(
             val uri: String
         ): Action()
+        object GoToMainMenuFragment: Action()
     }
 }

@@ -14,11 +14,15 @@
     <action
         android:id="@+id/action_global_to_authentication_nav_graph"
         app:destination="@id/authentication_nav_graph"
+        app:popUpTo="@id/spotifyLoginFragment"
+        app:popUpToInclusive="true"
        />
 
     <action
         android:id="@+id/action_global_to_main_nav_graph"
         app:destination="@id/main_nav_graph"
+        app:popUpTo="@id/roomSelectionFragment"
+        app:popUpToInclusive="true"
         />
 
     <!-- Authentication flow -->

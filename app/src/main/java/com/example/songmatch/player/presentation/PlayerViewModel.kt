@@ -6,6 +6,7 @@ import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.CreatePlaylistInSpotifyUseCase
 import com.example.songmatch.core.useCase.GetPlaylistUseCase
 import com.example.songmatch.core.useCase.GetTrackDetailsUseCase
+import com.example.songmatch.core.useCase.LeaveRoomUseCase
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class PlayerViewModel @Inject constructor(
     private val getPlaylistUseCase: GetPlaylistUseCase,
     private val getTrackDetailsUseCase: GetTrackDetailsUseCase,
-    private val createPlaylistInSpotifyUseCase: CreatePlaylistInSpotifyUseCase
+    private val createPlaylistInSpotifyUseCase: CreatePlaylistInSpotifyUseCase,
+    private val leaveRoomUseCase: LeaveRoomUseCase
 ): BaseViewModel<PlayerViewAction, PlayerViewState>()  {
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
@@ -60,6 +62,7 @@ class PlayerViewModel @Inject constructor(
 
     fun onCreatePlaylist() {
         viewModelScope.launch {
+            viewState.isLoading.value = true
             createPlaylistInSpotifyUseCase(viewState.tracksUri, viewState.roomCode.value!!)
                 .onSuccess {
                     it?.let {
@@ -69,8 +72,21 @@ class PlayerViewModel @Inject constructor(
                 }
                 .onError {
                     Log.d("ashda", "Erro ao criar playlist")
+                }.onFinish {
+                    viewState.isLoading.value = false
                 }
 
+        }
+    }
+
+    fun onLeaveRoom() {
+        viewModelScope.launch {
+            viewState.isLoading.value = true
+            leaveRoomUseCase().onSuccess {
+                viewState.action.postValue(PlayerViewState.Action.GoToMainMenuFragment)
+            }.onFinish {
+                viewState.isLoading.value = false
+            }
         }
     }
 
@@ -80,6 +96,7 @@ class PlayerViewModel @Inject constructor(
 
     private fun getPlaylist(roomCode: String) {
         viewModelScope.launch {
+            viewState.isLoading.value = true
             getPlaylistUseCase(roomCode)
                 .onSuccess {
                     viewState.tracksUri = it.tracksUri
@@ -87,6 +104,9 @@ class PlayerViewModel @Inject constructor(
                 }
                 .onError {
 //                    TODO: Let user know it
+                }
+                .onFinish {
+                    viewState.isLoading.value = false
                 }
         }
     }

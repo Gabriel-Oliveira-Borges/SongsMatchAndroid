@@ -35,6 +35,7 @@ class RoomFragment: BaseFragment() {
                 is RoomViewState.Action.OpenPlayerFragment -> navController.navigate(
                     RoomFragmentDirections.actionRoomFragmentToPlayerFragment(roomCode = it.roomCode)
                 )
+                is RoomViewState.Action.GoToMainMenuFragment -> navController.popBackStack()
             }
         }
     }

@@ -49,11 +49,12 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
     }
 
     override fun onSpotifyLoginError() {
-        //TODO: Alert user!
+        viewModel.viewState.isLoading.value = false
         Log.d("Blah", "Erro ao fazer login")
     }
 
     override fun onSpotifyLoginSuccess() {
+        viewModel.viewState.isLoading.value = false
         navController.navigate(NavGraphDirections.actionGlobalToMainNavGraph())
     }
 

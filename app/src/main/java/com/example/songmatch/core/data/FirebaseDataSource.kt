@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.songmatch.core.data.FirebaseCollections.PLAYLISTS_COLLECTION
 import com.example.songmatch.core.data.FirebaseCollections.ROOM_COLLECTION
 import com.example.songmatch.core.data.FirebaseCollections.TRACK_COLLECTION
+import com.example.songmatch.core.data.FirebaseCollections.USER_COLLECTION
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
 import com.example.songmatch.core.domain.model.User
@@ -45,6 +46,8 @@ interface FirebaseDataSource {
     suspend fun addSpotifyPlaylistUri(roomCode: String, uri: String): ResultOf<Unit, Unit>
 
     suspend fun getTrackDetails(trackUri: String): ResultOf<FirebaseTrack, Unit>
+    suspend fun leaveRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
+
     data class FirebasePlaylist(
         val roomCode: String,
         val tracksUri: List<String>
@@ -231,13 +234,15 @@ class FirebaseDataSourceImp @Inject constructor(
     }
 
     override suspend fun getRoom(roomCode: String): ResultOf<FirebaseDataSource.FirebaseRoom?, Unit> {
-        return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {data ->
-            FirebaseDataSource.FirebaseRoom(
-                usersToken = data?.get("usersToken") as List<String>,
-                roomCode = data?.get("roomCode") as String,
-                playlistCreated = data?.get("playlistCreated") as Boolean,
-                playlistLink = data?.get("playlistLink") as String?
-            )
+        return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {it ->
+            it?.let { data ->
+                FirebaseDataSource.FirebaseRoom(
+                    usersToken = data["usersToken"] as List<String>,
+                    roomCode = data["roomCode"] as String,
+                    playlistCreated = data["playlistCreated"] as Boolean,
+                    playlistLink = data["playlistLink"] as String?
+                )
+            }
         }
     }
     override suspend fun getUserTracks(userToken: String): ResultOf<List<FirebaseDataSource.FirebaseTrack>, Unit> {
@@ -293,6 +298,36 @@ class FirebaseDataSourceImp @Inject constructor(
         if (result is ResultOf.Success) {
             this.addUserRoomToUser(roomCode = roomCode, userToken = userToken)
         }
+
+        return result
+    }
+
+    override suspend fun leaveRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {
+        lateinit var result: ResultOf<Unit, Unit>
+        firestore.collection(ROOM_COLLECTION)
+            .document(roomCode)
+            .update("usersToken", FieldValue.arrayRemove(userToken))
+            .addOnSuccessListener {
+                result = ResultOf.Success(Unit)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+
+        firestore.collection(USER_COLLECTION)
+            .document(userToken)
+            .set(hashMapOf("userRoom" to null), SetOptions.merge())
+            .addOnSuccessListener {
+                result = ResultOf.Success(Unit)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+
 
         return result
     }

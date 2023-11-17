@@ -11,16 +11,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".mainMenu.presentation.JoinRoomFragment">
+
         <Button
-            android:onClick="@{() -> viewModel.onJoinRoomPressed()}"
-            android:text="Entrar na sala"
+            app:loading="@{viewModel.viewState.isLoading}"
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="@{() -> viewModel.onJoinRoomPressed()}"
+            android:text="Entrar na sala"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.6" />
 
         <EditText
             android:text="@={viewModel.viewState.roomCode}"
@@ -35,6 +38,29 @@
             app:layout_constraintBottom_toTopOf="@+id/button3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp"
+            android:text="Digite o código da sala:"
+            app:layout_constraintBottom_toTopOf="@+id/editTextNumber"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            app:loading="@{viewModel.viewState.isLoading}"
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

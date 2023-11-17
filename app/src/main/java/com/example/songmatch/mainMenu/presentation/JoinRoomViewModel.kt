@@ -23,10 +23,13 @@ class JoinRoomViewModel @Inject constructor(
     fun onJoinRoomPressed() {
         viewModelScope.launch {
             if (viewState.roomCode.value?.length == 5) {
+                viewState.isLoading.value = true
                 joinRoomUseCase(roomCode = viewState.roomCode.value!!).onSuccess {
                     viewState.action.postValue(JoinRoomViewState.Action.NavigateToRoomFragment)
                 }.onError {
                     Log.d("Joinroom error", it)
+                }.onFinish {
+                    viewState.isLoading.value = false
                 }
             } else {
 //            TODO: Let user know it

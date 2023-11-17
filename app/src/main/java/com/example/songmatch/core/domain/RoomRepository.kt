@@ -18,6 +18,7 @@ interface RoomRepository {
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<Room, Unit>>
     suspend fun isRoomCodeValid(roomCode: String, userToken: String): Boolean
     suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
+    suspend fun leaveRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
 }
 
 class RoomRepositoryImp @Inject constructor(
@@ -39,6 +40,10 @@ class RoomRepositoryImp @Inject constructor(
                 )
             }
         }
+    }
+
+    override suspend fun leaveRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {
+        return firebaseDataSource.leaveRoom(roomCode, userToken)
     }
 
     override suspend fun listenToRoom(roomCode: String): Flow<ResultOf<Room, Unit>> {

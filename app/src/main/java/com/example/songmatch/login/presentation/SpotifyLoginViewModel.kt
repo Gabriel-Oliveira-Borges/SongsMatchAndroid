@@ -17,7 +17,6 @@ class SpotifyLoginViewModel @Inject constructor(
     private val loginToSpotifyUseCase: LoginToSpotifyUseCase,
 ) : BaseViewModel<SpotifyLoginViewAction, SpotifyLoginViewState>() {
     override val viewState = SpotifyLoginViewState()
-    var tracks = mutableListOf<TrackResponse>()
 
     override fun dispatchViewAction(action: SpotifyLoginViewAction) {
         when (action) {
@@ -26,6 +25,7 @@ class SpotifyLoginViewModel @Inject constructor(
     }
 
     private fun requestLogin() {
+        viewState.isLoading.value = true
         loginToSpotifyUseCase()
     }
 }
