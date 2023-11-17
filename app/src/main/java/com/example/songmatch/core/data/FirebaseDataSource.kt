@@ -1,32 +1,30 @@
 package com.example.songmatch.core.data
 
 import android.util.Log
-import com.example.songmatch.core.domain.model.SpotifyUser
+import com.example.songmatch.core.data.FirebaseCollections.PLAYLISTS_COLLECTION
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
 import com.example.songmatch.core.domain.model.User
 import com.example.songmatch.core.framework.room.entities.UserEntity
 import com.example.songmatch.core.mappers.UserEntityToUserMapper
 import com.example.songmatch.core.models.ResultOf
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 object FirebaseCollections {
     val USER_COLLECTION = "users"
     val ROOM_COLLECTION = "rooms"
     val TRACK_COLLECTION = "tracks"
+    val PLAYLISTS_COLLECTION = "playlists"
 }
 
 interface FirebaseDataSource {
@@ -38,10 +36,18 @@ interface FirebaseDataSource {
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<FirebaseRoom, Unit>>
     suspend fun getRoom(roomCode: String): ResultOf<FirebaseRoom?, Unit>
     suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
+    suspend fun getUserTracks(userToken: String): ResultOf<List<FirebaseTrack>, Unit>
+
+    suspend fun createPlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit>
+    suspend fun getPlaylist(roomCode: String): ResultOf<FirebasePlaylist, Unit>
+    data class FirebasePlaylist(
+        val roomCode: String,
+        val tracksUri: List<String>
+    )
 
     data class FirebaseRoom(
         val usersToken: List<String>,
-        val roomCode: Int,
+        val roomCode: String,
         val playlistCreated: Boolean,
         val playlistLink: String?
     )
@@ -128,7 +134,7 @@ class FirebaseDataSourceImp @Inject constructor(
             document = roomCode.toString(),
             data = FirebaseDataSource.FirebaseRoom(
                 usersToken = listOf(user.spotifyUser.token),
-                roomCode = roomCode,
+                roomCode = roomCode.toString(),
                 playlistCreated = false,
                 playlistLink = null
             )
@@ -137,17 +143,73 @@ class FirebaseDataSourceImp @Inject constructor(
         }
     }
 
+    override suspend fun createPlaylist(
+        roomCode: String,
+        tracksUri: List<String>
+    ): ResultOf<Unit, Unit> {
+        val data = FirebaseDataSource.FirebasePlaylist(
+            roomCode = roomCode,
+            tracksUri = tracksUri
+        )
+        return this.addDocument(PLAYLISTS_COLLECTION, roomCode, data).onSuccess {
+            firestore
+                .collection(FirebaseCollections.ROOM_COLLECTION)
+                .document(roomCode)
+                .set(hashMapOf("playlistCreated" to true), SetOptions.merge())
+        }
+    }
+
+    override suspend fun getPlaylist(roomCode: String): ResultOf<FirebaseDataSource.FirebasePlaylist, Unit> {
+        return this.getDocument(PLAYLISTS_COLLECTION, roomCode).mapSuccess {
+            FirebaseDataSource.FirebasePlaylist(
+                roomCode = it?.get("roomCode") as String,
+                tracksUri = it["tracksUri"] as List<String>
+            )
+        }
+    }
+
     override suspend fun getRoom(roomCode: String): ResultOf<FirebaseDataSource.FirebaseRoom?, Unit> {
         return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {data ->
-            Log.d("FirebaseDataSource", data.toString())
             FirebaseDataSource.FirebaseRoom(
                 usersToken = data?.get("usersToken") as List<String>,
-                roomCode = (data["roomCode"] as Long).toInt(),
+                roomCode = data["roomCode"] as String,
                 playlistCreated = data["playlistCreated"] as Boolean,
                 playlistLink = data["playlistLink"] as String?
             )
-
         }
+    }
+    override suspend fun getUserTracks(userToken: String): ResultOf<List<FirebaseDataSource.FirebaseTrack>, Unit> {
+        lateinit var result: ResultOf<MutableList<FirebaseDataSource.FirebaseTrack>, Unit>
+        firestore
+            .collection(FirebaseCollections.TRACK_COLLECTION)
+            .whereEqualTo("userToken", userToken)
+            .get()
+            .addOnSuccessListener {
+                val tracks = mutableListOf<FirebaseDataSource.FirebaseTrack>()
+
+                for (document in it.documents) {
+                    val data = document.data
+                    tracks.add(
+                        FirebaseDataSource.FirebaseTrack(
+                            id = data?.get("id") as String,
+                            name = data["name"] as String,
+                            popularity = (data["popularity"] as Long).toInt(),
+                            timeRange = data["timeRange"] as String?,
+                            type = data["type"] as String,
+                            uri = data["uri"] as String,
+                            userToken = data["userToken"] as String,
+                            artists = data["artists"] as List<TrackArtist>,
+                        )
+                    )
+                }
+                result = ResultOf.Success(tracks)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+        return result
     }
 
     override suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit> {
@@ -182,7 +244,7 @@ class FirebaseDataSourceImp @Inject constructor(
 
                         val room = FirebaseDataSource.FirebaseRoom(
                             usersToken = data["usersToken"] as List<String>,
-                            roomCode = (data["roomCode"] as Long).toInt(),
+                            roomCode = data["roomCode"] as String,
                             playlistCreated = data["playlistCreated"] as Boolean,
                             playlistLink = data["playlistLink"] as String?
                         )

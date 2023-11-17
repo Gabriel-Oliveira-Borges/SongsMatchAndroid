@@ -1,5 +1,6 @@
 package com.example.songmatch.core.useCase
 
+import android.util.Log
 import com.example.songmatch.core.domain.RoomRepository
 import com.example.songmatch.core.domain.model.Room
 import com.example.songmatch.core.models.ResultOf
@@ -16,8 +17,8 @@ class ListenToCurrentRoomUseCaseImp @Inject constructor(
 ): ListenToCurrentRoomUseCase {
 
     override suspend fun invoke(): Flow<ResultOf<Room, Unit>>? {
-        // TODO: Remove hardcoded code after current room is in User local database!
-        val user = getCurrentUserUseCase().handleResult()!!
-        return user.currentRoom?.let { roomRepository.listenToRoom(it) }
+        val user = getCurrentUserUseCase().handleResult()
+        Log.d("ListenTonCurrentRoom", user.toString())
+        return user?.currentRoom?.let { roomRepository.listenToRoom(it) }
     }
 }

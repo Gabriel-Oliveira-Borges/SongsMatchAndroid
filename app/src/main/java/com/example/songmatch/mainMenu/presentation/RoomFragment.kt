@@ -5,14 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.songmatch.core.presentation.BaseFragment
-import com.example.songmatch.databinding.PersonInRoomItemBinding
 import com.example.songmatch.databinding.RoomFragmentBinding
-import com.example.songmatch.mainMenu.presentation.adapter.UsersInRoomAdapter
-import com.example.songmatch.mainMenu.presentation.model.MainMenuViewAction
 import com.example.songmatch.mainMenu.presentation.model.RoomViewAction
+import com.example.songmatch.mainMenu.presentation.model.RoomViewState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,16 +19,23 @@ class RoomFragment: BaseFragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
+        observeActions()
+        viewModel.dispatchViewAction(RoomViewAction.ListenToCurrentRoom)
+
         return RoomFragmentBinding.inflate(inflater, container, false).apply {
             this.lifecycleOwner = this@RoomFragment.viewLifecycleOwner
-            recyclerView.adapter = UsersInRoomAdapter(this@RoomFragment.viewModel)
-            recyclerView.layoutManager = LinearLayoutManager(this@RoomFragment.context)
+            viewModel = this@RoomFragment.viewModel
         }.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.dispatchViewAction(RoomViewAction.ListenToCurrentRoom)
+    private fun observeActions() {
+        viewModel.viewState.action.observe(viewLifecycleOwner) {
+            when (it) {
+                is RoomViewState.Action.OpenPlayerFragment -> navController.navigate(
+                    RoomFragmentDirections.actionRoomFragmentToPlayerFragment(roomCode = it.roomCode)
+                )
+            }
+        }
     }
 }

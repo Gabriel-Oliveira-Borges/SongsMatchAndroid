@@ -20,5 +20,9 @@ abstract class UseCaseModule {
     @Binds
     abstract fun bindJoinRoomUseCaseImp(impl: JoinRoomUseCaseImp): JoinRoomUseCase
     @Binds
+    abstract fun bindCreatePlaylistUseCaseImp(impl: CreatePlaylistUseCaseImp): CreatePlaylistUseCase
+    @Binds
+    abstract fun bindGetPlaylistUseCaseImp(impl: GetPlaylistUseCaseImp): GetPlaylistUseCase
+    @Binds
     abstract fun bindGetUserCurrentRoomImp(impl: ListenToCurrentRoomUseCaseImp): ListenToCurrentRoomUseCase
 }

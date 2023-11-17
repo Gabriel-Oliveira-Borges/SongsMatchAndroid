@@ -67,6 +67,9 @@ class MainManuViewModel @Inject constructor(
 
             if (user != null) {
                 viewState.greetings.postValue("Olá, ${user.name}")
+                if (!user.currentRoom.isNullOrEmpty()) {
+                    viewState.navigationAction.postValue(MainMenuViewState.Action.NavigateToRoom)
+                }
             }
         }
     }

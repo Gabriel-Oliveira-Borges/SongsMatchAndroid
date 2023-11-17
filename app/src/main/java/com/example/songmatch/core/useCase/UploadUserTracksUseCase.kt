@@ -19,7 +19,7 @@ class UploadUserTracksUseCaseImp @Inject constructor(
         val user = sessionRepository.getCurrentUser()
         return user.handleResult()?.let {
             if (!it.tracksUploaded) {
-                tracksRepository.uploadUserTracks()
+                tracksRepository.uploadUserTracks(it)
                     .onSuccess {
                         sessionRepository.updateTracksUploaded(true)
                     }

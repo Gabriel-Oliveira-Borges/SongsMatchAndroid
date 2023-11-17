@@ -35,5 +35,18 @@
         tools:layout="@layout/room_fragment"
         android:id="@+id/roomFragment"
         android:name="com.example.songmatch.mainMenu.presentation.RoomFragment"
-        android:label="RoomFragment" />
+        android:label="RoomFragment" >
+        <action
+            android:id="@+id/action_roomFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
+    <fragment
+        tools:layout="@layout/player_fragment"
+        android:id="@+id/playerFragment"
+        android:name="com.example.songmatch.player.presentation.PlayerFragment"
+        android:label="PlayerFragment" >
+        <argument
+            android:name="roomCode"
+            app:argType="string" />
+    </fragment>
 </navigation>

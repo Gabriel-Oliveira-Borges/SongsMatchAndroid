@@ -18,6 +18,7 @@
             android:layout_marginStart="25dp"
             android:text="Sair da sala"
             app:layout_constraintBaseline_toBaselineOf="@+id/button4"
+            android:onClick="@{() -> viewModel.onLeaveRoom()}"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
@@ -27,6 +28,7 @@
             android:layout_marginEnd="25dp"
             android:layout_marginBottom="52dp"
             android:text="Criar playlist"
+            android:onClick="@{() -> viewModel.onCreatePlaylist()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -36,7 +38,8 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="25dp"
             android:layout_marginTop="50dp"
-            android:text="Código da sala: 12312"
+            tools:text="Código da sala: 12312"
+            android:text="@{viewModel.viewState.title}"
             android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,21 +51,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="25dp"
-            android:text="Pessoas na sala: 3"
+            tools:text="Pessoas na sala: 3"
+            android:text="@{viewModel.viewState.subtitle}"
             app:layout_constraintStart_toStartOf="@+id/textView2"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="409dp"
-            android:layout_height="508dp"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="15dp"
-            app:layout_constraintBottom_toTopOf="@+id/button5"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
