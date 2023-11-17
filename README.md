@@ -40,7 +40,7 @@ Implemented in MVVM pattern.
 - **Coroutines**
 
 ## Next Steps
-
+- Replace MVP UI
 - Refine objects returned by `FirebaseDataSource` for reduced coupling
 - Change data layer dispatchers to `Dispatchers.IO`
 - Implement logic for music matching. Currently, the app only combines the songs of all users in the room because I haven't had time to implement it.
