@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.songmatch.NavGraphDirections
+import com.example.songmatch.R
 import com.example.songmatch.presentation.listener.SpotifyLoginFragmentListener
 import com.example.songmatch.databinding.SpotifyLoginFragmentBinding
 import com.example.songmatch.presentation.model.SpotifyAuthBaseFragment
@@ -48,7 +49,7 @@ class SpotifyLoginFragment : SpotifyAuthBaseFragment(), SpotifyLoginFragmentList
 
     override fun onSpotifyLoginSuccess() {
         viewModel.viewState.isLoading.value = false
-        navController.navigate(NavGraphDirections.actionGlobalToMainNavGraph())
+        navController.setGraph(R.navigation.main_nav_graph)
     }
 
     private fun observeActions() {
