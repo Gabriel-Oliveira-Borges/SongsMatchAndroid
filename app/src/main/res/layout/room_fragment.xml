@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.mainMenu.presentation.RoomViewModel" />
+            type="com.example.songmatch.presentation.RoomViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
             app:loading="@{viewModel.viewState.isLoading}" />
 
         <Button
-            app:loading="@{viewModel.viewState.isLoading}"
+            android:enabled="false"
             android:id="@+id/button5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

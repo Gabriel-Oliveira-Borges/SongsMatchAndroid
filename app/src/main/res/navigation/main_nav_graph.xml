@@ -7,7 +7,7 @@
     <fragment
         tools:layout="@layout/main_menu_fragment"
         android:id="@+id/roomSelectionFragment"
-        android:name="com.example.songmatch.mainMenu.presentation.MainMenuFragment"
+        android:name="com.example.songmatch.presentation.MainMenuFragment"
         android:label="RoomSelectionFragment" >
         <action
             android:id="@+id/action_roomSelectionFragment_to_joinRoomFragment"
@@ -23,7 +23,7 @@
     <fragment
         tools:layout="@layout/join_room_fragment"
         android:id="@+id/joinRoomFragment"
-        android:name="com.example.songmatch.mainMenu.presentation.JoinRoomFragment"
+        android:name="com.example.songmatch.presentation.JoinRoomFragment"
         android:label="JoinRoomFragment" >
         <action
             android:id="@+id/action_joinRoomFragment_to_roomFragment"
@@ -34,7 +34,7 @@
     <fragment
         tools:layout="@layout/room_fragment"
         android:id="@+id/roomFragment"
-        android:name="com.example.songmatch.mainMenu.presentation.RoomFragment"
+        android:name="com.example.songmatch.presentation.RoomFragment"
         android:label="RoomFragment" >
         <action
             android:id="@+id/action_roomFragment_to_playerFragment"
@@ -43,7 +43,7 @@
     <fragment
         tools:layout="@layout/player_fragment"
         android:id="@+id/playerFragment"
-        android:name="com.example.songmatch.player.presentation.PlayerFragment"
+        android:name="com.example.songmatch.presentation.PlayerFragment"
         android:label="PlayerFragment" >
         <argument
             android:name="roomCode"

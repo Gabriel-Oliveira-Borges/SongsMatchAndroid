@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.player.presentation.PlayerViewModel" />
+            type="com.example.songmatch.presentation.PlayerViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

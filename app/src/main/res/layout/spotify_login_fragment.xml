@@ -6,10 +6,10 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.login.presentation.SpotifyLoginViewModel" />
+            type="com.example.songmatch.presentation.SpotifyLoginViewModel" />
         <variable
             name="listener"
-            type="com.example.songmatch.login.presentation.listener.SpotifyLoginFragmentListener" />
+            type="com.example.songmatch.presentation.listener.SpotifyLoginFragmentListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,7 +19,7 @@
         tools:context=".OldLogin.main.SpotifyLoginFragment">
 
         <Button
-            app:isLoading="@{viewModel.viewState.isLoading}"
+            app:loading="@{viewModel.viewState.isLoading}"
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

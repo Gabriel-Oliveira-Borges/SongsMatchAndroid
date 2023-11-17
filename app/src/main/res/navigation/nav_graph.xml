@@ -6,7 +6,7 @@
     app:startDestination="@id/initFragment">
     <fragment
         android:id="@+id/initFragment"
-        android:name="com.example.songmatch.core.presentation.InitFragment"
+        android:name="com.example.songmatch.presentation.InitFragment"
         android:label="init_fragment"
         tools:layout="@layout/init_fragment" >
     </fragment>

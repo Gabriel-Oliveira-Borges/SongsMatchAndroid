@@ -6,11 +6,11 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
-import com.example.songmatch.core.useCase.SaveSpotifyUserUseCase
-import com.example.songmatch.login.presentation.CLIENT_ID
-import com.example.songmatch.login.presentation.REDIRECT_URI
-import com.example.songmatch.login.presentation.SPOTIFY_LOGIN_REQUEST_CODE
-import com.example.songmatch.login.presentation.model.SpotifyAuthBaseFragment
+import com.example.songmatch.useCase.SaveSpotifyUserUseCase
+import com.example.songmatch.presentation.CLIENT_ID
+import com.example.songmatch.presentation.REDIRECT_URI
+import com.example.songmatch.presentation.SPOTIFY_LOGIN_REQUEST_CODE
+import com.example.songmatch.presentation.model.SpotifyAuthBaseFragment
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.sdk.android.authentication.AuthenticationClient
 import com.spotify.sdk.android.authentication.AuthenticationResponse

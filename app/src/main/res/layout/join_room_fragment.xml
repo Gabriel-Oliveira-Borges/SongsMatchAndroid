@@ -5,12 +5,12 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.songmatch.mainMenu.presentation.JoinRoomViewModel" />
+            type="com.example.songmatch.presentation.JoinRoomViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".mainMenu.presentation.JoinRoomFragment">
+        tools:context=".presentation.JoinRoomFragment">
 
         <Button
             app:loading="@{viewModel.viewState.isLoading}"
