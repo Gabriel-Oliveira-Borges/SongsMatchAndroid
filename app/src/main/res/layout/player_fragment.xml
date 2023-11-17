@@ -75,7 +75,7 @@
             android:layout_height="19dp"
             android:layout_marginTop="25dp"
             tools:text="Nome música"
-            android:text="@{viewModel.viewState.currentTrack.name}"
+            android:text="@{viewModel.viewState.spotifyTrack.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             tools:text="artistas"
-            android:text="@{viewModel.viewState.currentTrack.artist.name}"
+            android:text="@{viewModel.viewState.spotifyTrack.artist.name}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView4" />

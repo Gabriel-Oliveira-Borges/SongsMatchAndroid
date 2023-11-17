@@ -1,6 +1,7 @@
 package com.example.songmatch.core.api
 
 import com.example.songmatch.RequestInterruptedBySpotifyLogin
+import com.spotify.protocol.types.Album
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import retrofit2.http.GET
@@ -108,7 +109,18 @@ data class TrackResponse(
     val type: String,
     val popularity: Int,
     val uri: String,
+    val album: TrackAlbumResponse?,
     var timeRange: String? = null,
     var isSavedTrack: Boolean = false,
     var isTopTrack: Boolean = false,
+)
+
+@JsonClass(generateAdapter = true)
+data class TrackAlbumResponse(
+    val images: List<TrackAlbumImagesResponse>
+)
+
+@JsonClass(generateAdapter = true)
+data class TrackAlbumImagesResponse(
+    val url: String
 )

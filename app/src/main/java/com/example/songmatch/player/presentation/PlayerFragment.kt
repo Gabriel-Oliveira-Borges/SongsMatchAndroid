@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.example.songmatch.R
 import com.example.songmatch.login.presentation.CLIENT_ID
 import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.core.presentation.BaseFragment
@@ -13,6 +14,7 @@ import com.example.songmatch.databinding.PlayerFragmentBinding
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -37,6 +39,8 @@ class PlayerFragment: BaseFragment() {
             viewModel = this@PlayerFragment.viewModel
             lifecycleOwner = this@PlayerFragment.viewLifecycleOwner
         }.root
+
+        listenToCurrentTrack()
 
         return view
     }
@@ -67,8 +71,13 @@ class PlayerFragment: BaseFragment() {
     }
 
     private fun listenToCurrentTrack() {
-        viewModel.viewState.currentTrack.observe(this) {
-            
+        viewModel.viewState.currentTrack.observe(viewLifecycleOwner) {
+            Picasso
+                .get()
+                .load(it.albumImageUri)
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
+                .into(binding.imageView)
         }
     }
 

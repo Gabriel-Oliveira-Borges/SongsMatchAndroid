@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
 import com.example.songmatch.core.useCase.GetPlaylistUseCase
+import com.example.songmatch.core.useCase.GetTrackDetailsUseCase
 import com.spotify.android.appremote.api.SpotifyAppRemote
 import com.spotify.protocol.types.PlayerState
 import com.spotify.protocol.types.Track
@@ -13,10 +14,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
-    private val getPlaylistUseCase: GetPlaylistUseCase
+    private val getPlaylistUseCase: GetPlaylistUseCase,
+    private val getTrackDetailsUseCase: GetTrackDetailsUseCase
 ): BaseViewModel<PlayerViewAction, PlayerViewState>()  {
     var mSpotifyAppRemote: SpotifyAppRemote? = null
-    private var isFirstTrack = true
 
     override val viewState = PlayerViewState()
 
@@ -81,16 +82,24 @@ class PlayerViewModel @Inject constructor(
 
                 val track: Track? = playerState.track
 
-                if (track != null) {
-                    viewState.currentTrack.postValue(playerState.track)
+                if (track != null && track.uri != viewState.spotifyTrack.value?.uri) {
+                    viewState.spotifyTrack.postValue(playerState.track)
+                    getTrackDetails(track.uri)
                 }
             }
+    }
+
+    private fun getTrackDetails(trackUri: String) {
+        viewModelScope.launch {
+            getTrackDetailsUseCase(trackUri).onSuccess {
+                viewState.currentTrack.value = it
+            }
+        }
     }
 
     private fun prepareFirstTrack() {
         viewState.tracksUri.firstOrNull()?.apply {
             playTrack(this)
-            mSpotifyAppRemote?.playerApi?.pause()
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.songmatch.core.data
 
 import android.util.Log
 import com.example.songmatch.core.data.FirebaseCollections.PLAYLISTS_COLLECTION
+import com.example.songmatch.core.data.FirebaseCollections.TRACK_COLLECTION
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
 import com.example.songmatch.core.domain.model.User
@@ -40,6 +41,8 @@ interface FirebaseDataSource {
 
     suspend fun createPlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit>
     suspend fun getPlaylist(roomCode: String): ResultOf<FirebasePlaylist, Unit>
+
+    suspend fun getTrackDetails(trackUri: String): ResultOf<FirebaseTrack, Unit>
     data class FirebasePlaylist(
         val roomCode: String,
         val tracksUri: List<String>
@@ -69,6 +72,8 @@ interface FirebaseDataSource {
         val uri: String,
         val userToken: String,
         val artists: List<TrackArtist>,
+        val albumImageUri: String?,
+
     ) {
         companion object {
             fun fromTrack(track: Track): FirebaseTrack = FirebaseTrack(
@@ -79,7 +84,8 @@ interface FirebaseDataSource {
                 type = track.type,
                 uri = track.uri,
                 userToken = track.userToken,
-                artists = track.artists
+                artists = track.artists,
+                albumImageUri = track.albumImageUri
             )
         }
     }
@@ -168,6 +174,39 @@ class FirebaseDataSourceImp @Inject constructor(
         }
     }
 
+    override suspend fun getTrackDetails(trackUri: String): ResultOf<FirebaseDataSource.FirebaseTrack, Unit> {
+        lateinit var result: ResultOf<FirebaseDataSource.FirebaseTrack, Unit>
+        firestore
+            .collection(TRACK_COLLECTION)
+            .whereEqualTo("uri", trackUri)
+            .get()
+            .addOnSuccessListener {
+
+                val document = it.firstOrNull()
+                val data = document?.data
+
+                result = ResultOf.Success(
+                    FirebaseDataSource.FirebaseTrack(
+                        id = data?.get("id") as String,
+                        name = data["name"] as String,
+                        popularity = (data["popularity"] as Long).toInt(),
+                        timeRange = data["timeRange"] as String?,
+                        type = data["type"] as String,
+                        uri = data["uri"] as String,
+                        userToken = data["userToken"] as String,
+                        artists = data["artists"] as List<TrackArtist>,
+                        albumImageUri = data["albumImageUri"] as String?
+                    )
+                )
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+        return result
+    }
+
     override suspend fun getRoom(roomCode: String): ResultOf<FirebaseDataSource.FirebaseRoom?, Unit> {
         return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {data ->
             FirebaseDataSource.FirebaseRoom(
@@ -199,6 +238,7 @@ class FirebaseDataSourceImp @Inject constructor(
                             uri = data["uri"] as String,
                             userToken = data["userToken"] as String,
                             artists = data["artists"] as List<TrackArtist>,
+                            albumImageUri = data["albumImageUri"] as String?
                         )
                     )
                 }
@@ -220,13 +260,16 @@ class FirebaseDataSourceImp @Inject constructor(
             .update("usersToken", FieldValue.arrayUnion(userToken))
             .addOnSuccessListener {
                 result = ResultOf.Success(Unit)
-                this.addUserRoomToUser(roomCode = roomCode, userToken = userToken)
             }
             .addOnFailureListener {
                 Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
                 result = ResultOf.Error(Unit)
             }
             .await()
+
+        if (result is ResultOf.Success) {
+            this.addUserRoomToUser(roomCode = roomCode, userToken = userToken)
+        }
 
         return result
     }
@@ -295,11 +338,21 @@ class FirebaseDataSourceImp @Inject constructor(
         return result
     }
 
-    private fun addUserRoomToUser(userToken: String, roomCode: String) {
+    private suspend fun addUserRoomToUser(userToken: String, roomCode: String): ResultOf<Unit, Unit> {
+        lateinit var result: ResultOf<Unit, Unit>
         firestore
             .collection(FirebaseCollections.USER_COLLECTION)
             .document(userToken)
             .set(hashMapOf("userRoom" to roomCode), SetOptions.merge())
+            .addOnSuccessListener {
+                result = ResultOf.Success(Unit)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }.await()
+
+        return result
     }
 
     private suspend inline fun removeDocument(collection: String, document: String): ResultOf<Unit, Unit> {

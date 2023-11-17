@@ -19,9 +19,13 @@ class JoinRoomUseCaseImp @Inject constructor(
         return if (user.currentRoom != null) {
             ResultOf.Success(Unit)
         } else if (roomRepository.isRoomCodeValid(roomCode, user.spotifyUser.token)) {
-            roomRepository.joinRoom(roomCode, userToken = user.spotifyUser.token).mapError {
-                "Erro ao entrar na sala"
-            }
+            roomRepository.joinRoom(roomCode, userToken = user.spotifyUser.token)
+                .onSuccess {
+                    sessionRepository.updateUserRoom(roomCode)
+                }
+                .mapError {
+                    "Erro ao entrar na sala"
+                }
         } else {
             ResultOf.Error("Room code invalid")
         }

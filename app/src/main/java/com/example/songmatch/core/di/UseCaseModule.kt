@@ -24,5 +24,7 @@ abstract class UseCaseModule {
     @Binds
     abstract fun bindGetPlaylistUseCaseImp(impl: GetPlaylistUseCaseImp): GetPlaylistUseCase
     @Binds
+    abstract fun bindGetTrackDetailsUseCaseImp(impl: GetTrackDetailsUseCaseImp): GetTrackDetailsUseCase
+    @Binds
     abstract fun bindGetUserCurrentRoomImp(impl: ListenToCurrentRoomUseCaseImp): ListenToCurrentRoomUseCase
 }

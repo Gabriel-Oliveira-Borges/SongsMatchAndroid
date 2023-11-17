@@ -17,7 +17,7 @@ class CreatePlaylistUseCaseImp @Inject constructor(
 ): CreatePlaylistUseCase {
     override suspend fun invoke(room: Room): ResultOf<Unit, Unit> {
         val tracks = getAllTracks(room)
-        return tracksRepository.savePlaylist(room.roomCode.toString(), tracks.map { it.uri })
+        return tracksRepository.savePlaylist(room.roomCode.toString(), tracks.map { it.uri }.shuffled())
     }
 
     private suspend fun getAllTracks(room: Room): List<Track> {

@@ -1,6 +1,5 @@
 package com.example.songmatch.core.domain
 
-import android.util.Log
 import com.example.songmatch.core.api.TrackResponse
 import com.example.songmatch.core.data.FirebaseDataSource
 import com.example.songmatch.core.data.SpotifyDataSource
@@ -11,7 +10,6 @@ import com.example.songmatch.core.domain.model.User
 import com.example.songmatch.core.models.ResponseError
 import com.example.songmatch.core.models.ResultOf
 import com.example.songmatch.core.t.TrackResponseToTrackMapper
-import com.example.songmatch.core.useCase.GetCurrentUserUseCase
 import javax.inject.Inject
 
 interface TrackRepository {
@@ -19,6 +17,7 @@ interface TrackRepository {
     suspend fun uploadUserTracks(user: User): ResultOf<Unit, Unit>
     suspend fun savePlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit>
     suspend fun getPlaylist(roomCode: String): ResultOf<Playlist, Unit>
+    suspend fun getTrackDetails(trackUri: String): ResultOf<Track, Unit>
 }
 
 class TrackRepositoryImp @Inject constructor(
@@ -43,6 +42,7 @@ class TrackRepositoryImp @Inject constructor(
                         uri = it.uri,
                         userToken = it.userToken,
                         artists = it.artists,
+                        albumImageUri = it.albumImageUri
                     )
                 }
             }.mapError {
@@ -82,6 +82,22 @@ class TrackRepositoryImp @Inject constructor(
             Playlist(
                 roomCode = playlist.roomCode,
                 tracksUri = playlist.tracksUri,
+            )
+        }
+    }
+
+    override suspend fun getTrackDetails(trackUri: String): ResultOf<Track, Unit> {
+        return firebaseDataSource.getTrackDetails(trackUri).mapSuccess {
+            Track(
+                id = it.id,
+                name = it.name,
+                popularity = it.popularity,
+                timeRange = it.timeRange,
+                type = it.type,
+                uri = it.uri,
+                albumImageUri = it.albumImageUri,
+                userToken = it.userToken,
+                artists = it.artists,
             )
         }
     }

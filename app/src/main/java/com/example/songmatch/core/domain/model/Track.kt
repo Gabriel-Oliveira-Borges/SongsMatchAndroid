@@ -10,6 +10,7 @@ data class Track(
     val timeRange: String?,
     val type: String,
     val uri: String,
+    val albumImageUri: String?,
     val userToken: String,
     val artists: List<TrackArtist>,
 )

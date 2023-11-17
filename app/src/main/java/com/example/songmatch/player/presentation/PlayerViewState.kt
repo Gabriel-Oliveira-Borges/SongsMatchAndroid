@@ -2,10 +2,11 @@ package com.example.songmatch.player.presentation
 
 
 import androidx.lifecycle.MutableLiveData
-import com.spotify.protocol.types.Track
+import com.example.songmatch.core.domain.model.Track
 
 class PlayerViewState {
     val currentTrack = MutableLiveData<Track>()
+    val spotifyTrack = MutableLiveData<com.spotify.protocol.types.Track>()
     var tracksUri = emptyList<String>()
     var trackIndex: Int = 0
         set(value) {

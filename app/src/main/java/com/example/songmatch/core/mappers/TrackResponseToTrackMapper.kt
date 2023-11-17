@@ -19,6 +19,7 @@ class TrackResponseToTrackMapper @Inject constructor(
                 type = it.type,
                 uri = it.uri,
                 userToken = userToken,
+                albumImageUri = it.album?.images?.firstOrNull()?.url,
                 artists = it.artists.map {
                     TrackArtist(
                         id = it.id,
