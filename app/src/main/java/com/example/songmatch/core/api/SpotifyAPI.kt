@@ -1,11 +1,14 @@
 package com.example.songmatch.core.api
 
 import com.example.songmatch.RequestInterruptedBySpotifyLogin
-import com.spotify.protocol.types.Album
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
+import retrofit2.http.Url
+
 
 enum class TimeRange(val field: String) {
     SHORT_TERM("short_term"),
@@ -23,11 +26,21 @@ object SpotifyRequestPath {
     const val getUser = "/v1/me"
     const val getSavedTracks = "/v1/me/tracks"
     const val getTopTracks = "/v1/me/top/tracks"
+
+    fun postPlaylist(userId: String): String = "https://api.spotify.com/v1/users/${userId}/playlists"
+
+    fun postTracksToPlaylist(playlistId: String) = "https://api.spotify.com/v1/playlists/${playlistId}/tracks"
 }
 
 interface SpotifyAPI {
     @GET(SpotifyRequestPath.getUser)
     suspend fun getUser(): SpotifyUserResponse
+
+    @POST()
+    suspend fun postPlaylist(@Url url: String, @Body body: PostPlaylistBody): PostPlaylistResponse
+
+    @POST()
+    suspend fun postPlaylistTracks(@Url url: String, @Body body: PostPlaylistTrackBody): Any
 
     
     @GET(SpotifyRequestPath.getSavedTracks)
@@ -78,7 +91,8 @@ data class SpotifyUserResponse(
     val email: String?,
     val images: List<SpotityUserProfileImageResponse>,
     val uri: String,
-    @Json(name = "external_urls") val externalUrls: SpotifyUserExternalUrlsResponse
+    @Json(name = "external_urls") val externalUrls: SpotifyUserExternalUrlsResponse,
+    val id: String
 )
 
 @JsonClass(generateAdapter = true)
@@ -123,4 +137,27 @@ data class TrackAlbumResponse(
 @JsonClass(generateAdapter = true)
 data class TrackAlbumImagesResponse(
     val url: String
+)
+
+@JsonClass(generateAdapter = true)
+data class PostPlaylistBody(
+    val name: String,
+    val description: String ="Playlist criada por songmatch"
+)
+
+@JsonClass(generateAdapter = true)
+data class PostPlaylistResponse(
+    val id: String,
+    val uri: String,
+    @field:Json(name = "external_urls") val externalUrls: PostPlaylistExternalUrlsResponse?
+)
+
+@JsonClass(generateAdapter = true)
+data class PostPlaylistExternalUrlsResponse(
+    val spotify: String
+)
+
+@JsonClass(generateAdapter = true)
+data class PostPlaylistTrackBody(
+    val uris: List<String>,
 )

@@ -22,10 +22,11 @@ private val SPOTIFY_AUTH_SCOPES = arrayOf(
     "user-modify-playback-state",
     "user-read-currently-playing",
     "playlist-modify-private",
+    "playlist-modify-public",
     "user-follow-read",
     "user-library-read",
     "user-read-email",
-    "user-read-private"
+    "user-read-private",
 )
 
 class LoginToSpotifyUseCaseImp @Inject constructor(

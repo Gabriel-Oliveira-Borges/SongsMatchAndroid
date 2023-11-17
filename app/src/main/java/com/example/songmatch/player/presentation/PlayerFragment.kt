@@ -1,5 +1,8 @@
 package com.example.songmatch.player.presentation
 
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,10 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.example.songmatch.R
-import com.example.songmatch.login.presentation.CLIENT_ID
-import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.example.songmatch.core.presentation.BaseFragment
 import com.example.songmatch.databinding.PlayerFragmentBinding
+import com.example.songmatch.login.presentation.CLIENT_ID
+import com.example.songmatch.login.presentation.REDIRECT_URI
 import com.spotify.android.appremote.api.ConnectionParams
 import com.spotify.android.appremote.api.Connector
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -28,6 +31,7 @@ class PlayerFragment: BaseFragment() {
         savedInstanceState: Bundle?
     ): View {
         connectToSpotifyApp()
+        observeActions()
 
         //TODO: Improve it
         (arguments?.get("roomCode") as? String)?.let {
@@ -78,6 +82,32 @@ class PlayerFragment: BaseFragment() {
                 .placeholder(R.drawable.ic_launcher_background)
                 .error(R.drawable.ic_launcher_foreground)
                 .into(binding.imageView)
+        }
+    }
+
+    private fun observeActions() {
+        viewModel.viewState.action.observe(viewLifecycleOwner) {
+            when (it) {
+                is PlayerViewState.Action.OpenSpotifyApp -> sendSpotifyIntent(it.uri)
+            }
+        }
+    }
+
+    private fun sendSpotifyIntent(uri: String) {
+        val pm: PackageManager = activity?.packageManager ?: return
+        val isSpotifyInstalled: Boolean = try {
+            pm.getPackageInfo("com.spotify.music", 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+
+        if (isSpotifyInstalled) {
+            val branchLink =
+                "https://spotify.link/content_linking?~campaign=" + context?.packageName + "&\$deeplink_path=" + uri + "&\$fallback_url=" + uri
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.data = Uri.parse(branchLink)
+            startActivity(intent)
         }
     }
 

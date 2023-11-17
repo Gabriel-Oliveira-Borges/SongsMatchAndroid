@@ -2,6 +2,7 @@ package com.example.songmatch.core.data
 
 import android.util.Log
 import com.example.songmatch.core.data.FirebaseCollections.PLAYLISTS_COLLECTION
+import com.example.songmatch.core.data.FirebaseCollections.ROOM_COLLECTION
 import com.example.songmatch.core.data.FirebaseCollections.TRACK_COLLECTION
 import com.example.songmatch.core.domain.model.Track
 import com.example.songmatch.core.domain.model.TrackArtist
@@ -41,6 +42,7 @@ interface FirebaseDataSource {
 
     suspend fun createPlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit>
     suspend fun getPlaylist(roomCode: String): ResultOf<FirebasePlaylist, Unit>
+    suspend fun addSpotifyPlaylistUri(roomCode: String, uri: String): ResultOf<Unit, Unit>
 
     suspend fun getTrackDetails(trackUri: String): ResultOf<FirebaseTrack, Unit>
     data class FirebasePlaylist(
@@ -118,6 +120,27 @@ class FirebaseDataSourceImp @Inject constructor(
         )
     }
 
+    override suspend fun addSpotifyPlaylistUri(
+        roomCode: String,
+        uri: String
+    ): ResultOf<Unit, Unit> {
+        lateinit var result: ResultOf<Unit, Unit>
+
+        firestore
+            .collection(ROOM_COLLECTION)
+            .document(roomCode)
+            .set(hashMapOf("playlistLink" to uri), SetOptions.merge())
+            .addOnSuccessListener {
+                result = ResultOf.Success(Unit)
+            }
+            .addOnFailureListener {
+                Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
+                result = ResultOf.Error(Unit)
+            }
+            .await()
+        return result
+    }
+
     override suspend fun addUserTracks(tracks: List<Track>): ResultOf<Unit, Unit> {
         return this.batchTask { batch ->
             tracks.forEach { track ->
@@ -183,21 +206,21 @@ class FirebaseDataSourceImp @Inject constructor(
             .addOnSuccessListener {
 
                 val document = it.firstOrNull()
-                val data = document?.data
-
-                result = ResultOf.Success(
-                    FirebaseDataSource.FirebaseTrack(
-                        id = data?.get("id") as String,
-                        name = data["name"] as String,
-                        popularity = (data["popularity"] as Long).toInt(),
-                        timeRange = data["timeRange"] as String?,
-                        type = data["type"] as String,
-                        uri = data["uri"] as String,
-                        userToken = data["userToken"] as String,
-                        artists = data["artists"] as List<TrackArtist>,
-                        albumImageUri = data["albumImageUri"] as String?
+                result = document?.data?.let {
+                    ResultOf.Success(
+                        FirebaseDataSource.FirebaseTrack(
+                            id = it["id"] as String,
+                            name = it["name"] as String,
+                            popularity = (it["popularity"] as Long).toInt(),
+                            timeRange = it["timeRange"] as String?,
+                            type = it["type"] as String,
+                            uri = it["uri"] as String,
+                            userToken = it["userToken"] as String,
+                            artists = it["artists"] as List<TrackArtist>,
+                            albumImageUri = it["albumImageUri"] as String?
+                        )
                     )
-                )
+                } ?: ResultOf.Error(Unit)
             }
             .addOnFailureListener {
                 Log.e("FirebaseError", it.localizedMessage ?: it.message ?: "")
@@ -211,9 +234,9 @@ class FirebaseDataSourceImp @Inject constructor(
         return  this.getDocument(FirebaseCollections.ROOM_COLLECTION, roomCode).mapSuccess {data ->
             FirebaseDataSource.FirebaseRoom(
                 usersToken = data?.get("usersToken") as List<String>,
-                roomCode = data["roomCode"] as String,
-                playlistCreated = data["playlistCreated"] as Boolean,
-                playlistLink = data["playlistLink"] as String?
+                roomCode = data?.get("roomCode") as String,
+                playlistCreated = data?.get("playlistCreated") as Boolean,
+                playlistLink = data?.get("playlistLink") as String?
             )
         }
     }
@@ -231,14 +254,14 @@ class FirebaseDataSourceImp @Inject constructor(
                     tracks.add(
                         FirebaseDataSource.FirebaseTrack(
                             id = data?.get("id") as String,
-                            name = data["name"] as String,
-                            popularity = (data["popularity"] as Long).toInt(),
-                            timeRange = data["timeRange"] as String?,
-                            type = data["type"] as String,
-                            uri = data["uri"] as String,
-                            userToken = data["userToken"] as String,
-                            artists = data["artists"] as List<TrackArtist>,
-                            albumImageUri = data["albumImageUri"] as String?
+                            name = data?.get("name") as String,
+                            popularity = (data?.get("popularity") as Long).toInt(),
+                            timeRange = data?.get("timeRange") as String?,
+                            type = data?.get("type") as String,
+                            uri = data?.get("uri") as String,
+                            userToken = data?.get("userToken") as String,
+                            artists = data?.get("artists") as List<TrackArtist>,
+                            albumImageUri = data?.get("albumImageUri") as String?
                         )
                     )
                 }
@@ -286,10 +309,10 @@ class FirebaseDataSourceImp @Inject constructor(
                         val data = snapshot.data!!
 
                         val room = FirebaseDataSource.FirebaseRoom(
-                            usersToken = data["usersToken"] as List<String>,
-                            roomCode = data["roomCode"] as String,
-                            playlistCreated = data["playlistCreated"] as Boolean,
-                            playlistLink = data["playlistLink"] as String?
+                            usersToken = data?.get("usersToken") as List<String>,
+                            roomCode = data?.get("roomCode") as String,
+                            playlistCreated = data?.get("playlistCreated") as Boolean,
+                            playlistLink = data?.get("playlistLink") as String?
                         )
                         offer(ResultOf.Success(room))
                     }

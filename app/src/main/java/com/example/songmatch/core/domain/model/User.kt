@@ -25,7 +25,8 @@ data class SpotifyUser(
     val tokenExpiration: Date,
     val email: String?,
     val imageUri: String?,
-    val uri: String?
+    val uri: String?,
+    val id: String
 )
 
 fun User.firstName() = this.name?.split(" ")?.firstOrNull()

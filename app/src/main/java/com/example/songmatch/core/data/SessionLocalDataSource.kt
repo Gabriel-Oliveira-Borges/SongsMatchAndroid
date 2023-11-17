@@ -56,7 +56,8 @@ class SessionLocalDataSourceImp @Inject constructor(
             lastTrackUpdate = null,
             remoteToken = null,
             tracksUploaded = false,
-            currentRoom = null
+            currentRoom = null,
+            id = ""
         )
         userDao.insertUser(user)
         return ResultOf.Success(Unit)

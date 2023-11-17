@@ -12,11 +12,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import javax.inject.Singleton
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Named
+import javax.inject.Singleton
+
 
 private const val BASE_SPOTIFY_URL = "https://api.spotify.com"
 
@@ -38,8 +40,11 @@ class RetrofitModule {
         loginToSpotifyUseCase: LoginToSpotifyUseCase,
         @ApplicationContext context: Context,
     ): OkHttpClient {
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return OkHttpClient.Builder()
             .addInterceptor(AuthInterceptor(session, mapper, loginToSpotifyUseCase, context))
+            .addInterceptor(loggingInterceptor  )
             .build()
     }
 

@@ -19,6 +19,8 @@ interface SpotifyDataSource {
 
     suspend fun getUserSavedTracks(): ResultOf<List<TrackResponse>, ResponseError>
     suspend fun getUserTopTracks(): ResultOf<List<TrackResponse>, ResponseError>
+
+    suspend fun savePlaylistToSpotify(tracksUri: List<String>, userId: String): ResultOf<String?, ResponseError>
 }
 
 class SpotifyDataSourceImpl @Inject constructor(
@@ -79,6 +81,20 @@ class SpotifyDataSourceImpl @Inject constructor(
             }
         }.onError {
             Log.e("SPOTIFY-API-ERROR", it.message ?: it.toString())
+        }
+    }
+
+    override suspend fun savePlaylistToSpotify(tracksUri: List<String>, userId: String): ResultOf<String?, ResponseError> {
+        return safeApiCall {
+            spotifyAPI.postPlaylist(url = SpotifyRequestPath.postPlaylist(userId), body = PostPlaylistBody(name = "SongMatch"))
+        }.mapSuccess {
+            for (trackChunk in tracksUri.chunked(100)) {
+                spotifyAPI.postPlaylistTracks(
+                    url = SpotifyRequestPath.postTracksToPlaylist(it.id),
+                    body = PostPlaylistTrackBody(uris = trackChunk)
+                )
+            }
+            it.externalUrls?.spotify
         }
     }
 }

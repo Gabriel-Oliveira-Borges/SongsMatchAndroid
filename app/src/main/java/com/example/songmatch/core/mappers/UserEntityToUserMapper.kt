@@ -14,7 +14,8 @@ class UserEntityToUserMapper @Inject constructor() : BaseMapper<UserEntity, User
                 tokenExpiration = from.spotifyTokenExpiration,
                 email = from.email,
                 imageUri = from.imageUri,
-                uri = from.uri
+                uri = from.uri,
+                id = from.id
             ),
             lastTrackUpdate = from.lastTrackUpdate,
             currentRoom = from.currentRoom,

@@ -17,7 +17,8 @@ class SpotifyUserResponseToUserMapper @Inject constructor() {
             lastTrackUpdate = null,
             remoteToken = null,
             currentRoom = null,
-            tracksUploaded = false
+            tracksUploaded = false,
+            id = from.id
         )
     }
 }

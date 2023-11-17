@@ -26,7 +26,7 @@ class AuthInterceptor(
         return runBlocking(Dispatchers.IO) {
             val requestBuilder = chain.request().newBuilder()
             val path =
-                requestBuilder.build().url().pathSegments().reduce { acc, s -> "${acc}/${s}" }
+                requestBuilder.build().url.pathSegments.reduce { acc, s -> "${acc}/${s}" }
             val interruptedRequest =
                 spotifyRequestPathToRequestInterruptedBySpotifyLoginMapper.map("/${path}")
             val user = session.getCurrentUser().handleResult()

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.songmatch.core.domain.model.Track
 
 class PlayerViewState {
+    val roomCode = MutableLiveData<String>()
     val currentTrack = MutableLiveData<Track>()
     val spotifyTrack = MutableLiveData<com.spotify.protocol.types.Track>()
     var tracksUri = emptyList<String>()
@@ -20,4 +21,11 @@ class PlayerViewState {
             field = nextIndex
         }
     var isPlaying = MutableLiveData<Boolean>()
+    var action = MutableLiveData<Action>()
+
+    sealed class Action {
+        data class OpenSpotifyApp(
+            val uri: String
+        ): Action()
+    }
 }

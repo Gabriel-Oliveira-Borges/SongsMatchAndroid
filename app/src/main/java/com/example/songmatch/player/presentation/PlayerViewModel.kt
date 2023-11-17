@@ -3,6 +3,7 @@ package com.example.songmatch.player.presentation
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.songmatch.core.presentation.BaseViewModel
+import com.example.songmatch.core.useCase.CreatePlaylistInSpotifyUseCase
 import com.example.songmatch.core.useCase.GetPlaylistUseCase
 import com.example.songmatch.core.useCase.GetTrackDetailsUseCase
 import com.spotify.android.appremote.api.SpotifyAppRemote
@@ -15,7 +16,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PlayerViewModel @Inject constructor(
     private val getPlaylistUseCase: GetPlaylistUseCase,
-    private val getTrackDetailsUseCase: GetTrackDetailsUseCase
+    private val getTrackDetailsUseCase: GetTrackDetailsUseCase,
+    private val createPlaylistInSpotifyUseCase: CreatePlaylistInSpotifyUseCase
 ): BaseViewModel<PlayerViewAction, PlayerViewState>()  {
     var mSpotifyAppRemote: SpotifyAppRemote? = null
 
@@ -29,6 +31,7 @@ class PlayerViewModel @Inject constructor(
                 setPlayerListener()
             }
             is PlayerViewAction.OnInit -> {
+                viewState.roomCode.postValue(action.roomCode)
                 getPlaylist(action.roomCode)
             }
         }
@@ -52,6 +55,22 @@ class PlayerViewModel @Inject constructor(
                 mSpotifyAppRemote?.playerApi?.resume()
             }
             viewState.isPlaying.postValue(it.toggle())
+        }
+    }
+
+    fun onCreatePlaylist() {
+        viewModelScope.launch {
+            createPlaylistInSpotifyUseCase(viewState.tracksUri, viewState.roomCode.value!!)
+                .onSuccess {
+                    it?.let {
+                        viewState.action.postValue(PlayerViewState.Action.OpenSpotifyApp(it))
+                    }
+                    Log.d("ashda", "Playlistcriada")
+                }
+                .onError {
+                    Log.d("ashda", "Erro ao criar playlist")
+                }
+
         }
     }
 

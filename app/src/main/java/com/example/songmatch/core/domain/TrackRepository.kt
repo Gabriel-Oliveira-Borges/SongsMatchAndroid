@@ -18,6 +18,7 @@ interface TrackRepository {
     suspend fun savePlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit>
     suspend fun getPlaylist(roomCode: String): ResultOf<Playlist, Unit>
     suspend fun getTrackDetails(trackUri: String): ResultOf<Track, Unit>
+    suspend fun savePlaylistToSpotify(tracksUri: List<String>, userId: String, roomCode: String): ResultOf<String?, Unit>
 }
 
 class TrackRepositoryImp @Inject constructor(
@@ -104,5 +105,15 @@ class TrackRepositoryImp @Inject constructor(
 
     override suspend fun savePlaylist(roomCode: String, tracksUri: List<String>): ResultOf<Unit, Unit> {
         return firebaseDataSource.createPlaylist(roomCode, tracksUri)
+    }
+
+    override suspend fun savePlaylistToSpotify(tracksUri: List<String>, userId: String, roomCode: String): ResultOf<String?, Unit> {
+        return spotifyDataSource.savePlaylistToSpotify(tracksUri, userId).mapError {
+            Unit
+        }.onSuccess {
+            if (!it.isNullOrEmpty()) {
+                firebaseDataSource.addSpotifyPlaylistUri(roomCode = roomCode, uri = it)
+            }
+        }
     }
 }

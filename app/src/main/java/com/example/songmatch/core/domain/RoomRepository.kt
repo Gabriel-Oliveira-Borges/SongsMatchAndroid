@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 interface RoomRepository {
     suspend fun createRoom(user: User): ResultOf<Int, Unit>
+    suspend fun getRoom(roomCode: String): ResultOf<Room?, Unit>
     suspend fun listenToRoom(roomCode: String): Flow<ResultOf<Room, Unit>>
     suspend fun isRoomCodeValid(roomCode: String, userToken: String): Boolean
     suspend fun joinRoom(roomCode: String, userToken: String): ResultOf<Unit, Unit>
@@ -25,6 +26,19 @@ class RoomRepositoryImp @Inject constructor(
 ): RoomRepository {
     override suspend fun createRoom(user: User): ResultOf<Int, Unit> {
         return firebaseDataSource.createRoom(user)
+    }
+
+    override suspend fun getRoom(roomCode: String): ResultOf<Room?, Unit> {
+        return firebaseDataSource.getRoom(roomCode).mapSuccess {firebaseRoom ->
+            firebaseRoom?.let {
+                Room(
+                    usersToken = it.usersToken,
+                    roomCode = it.roomCode,
+                    playlistCreated = it.playlistCreated,
+                    playlistLink = it.playlistLink,
+                )
+            }
+        }
     }
 
     override suspend fun listenToRoom(roomCode: String): Flow<ResultOf<Room, Unit>> {
